@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
+import { useSidebar } from '@/app/contexts/SidebarContext';
 
 interface HeaderProps {
   title: string;
@@ -10,9 +11,18 @@ interface HeaderProps {
 }
 
 export function Header({ title, description, action }: HeaderProps) {
+  const { sidebarWidth } = useSidebar();
+  
   return (
     <div className="border-b border-[hsl(var(--border))] bg-white/80 backdrop-blur-sm">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 sm:pl-64 py-6 md:py-8">
+      <style jsx global>{`
+        @media (min-width: 1024px) {
+          .header-with-sidebar {
+            padding-left: ${sidebarWidth + 16}px;
+          }
+        }
+      `}</style>
+      <div className="header-with-sidebar max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 transition-all duration-300 ease-out">
         <div className="flex items-start justify-between gap-4">
           <motion.div
             initial={{ opacity: 0, y: 12 }}

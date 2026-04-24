@@ -20,6 +20,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
+import { MainContent } from '@/components/MainContent';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
@@ -129,11 +130,9 @@ function AlunoDashboardContent() {
     return (
       <div className="min-h-screen bg-[hsl(var(--background))]">
         <Navigation />
-        <main className="pt-14 pb-20 lg:pb-8 lg:pl-60">
-          <div className="max-w-4xl mx-auto px-4 py-6">
-            <SkeletonDashboard />
-          </div>
-        </main>
+        <MainContent>
+          <SkeletonDashboard />
+        </MainContent>
       </div>
     );
   }
@@ -142,9 +141,7 @@ function AlunoDashboardContent() {
     <div className="min-h-screen bg-[hsl(var(--background))]">
       <Navigation />
 
-      <main className="pt-14 pb-20 lg:pb-8 lg:pl-60">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          
+      <MainContent>
           {/* Header */}
           <div className="flex items-center gap-4 mb-6">
             <Avatar name={userName} size="lg" />
@@ -292,8 +289,7 @@ function AlunoDashboardContent() {
               </Button>
             </Card>
           )}
-        </div>
-      </main>
+      </MainContent>
     </div>
   );
 }
