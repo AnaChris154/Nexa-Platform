@@ -11,6 +11,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
+import { MainContent } from '@/components/MainContent';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { ProtectedRoute } from '@/app/contexts/ProtectedRoute';
@@ -62,9 +63,7 @@ function AtividadesContent() {
     <div className="min-h-screen bg-[hsl(var(--background))]">
       <Navigation />
 
-      <main className="pt-14 pb-20 lg:pb-8 lg:pl-60">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          
+      <MainContent>
           {/* Header */}
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-[hsl(var(--foreground))]">
@@ -156,8 +155,7 @@ function AtividadesContent() {
               </Button>
             </Link>
           </div>
-        </div>
-      </main>
+      </MainContent>
     </div>
   );
 }

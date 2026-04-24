@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/app/contexts/AuthContext';
+import { useSidebar } from '@/app/contexts/SidebarContext';
 import { signOut } from '@/services/authService';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   Map,
@@ -15,6 +17,7 @@ import {
   LogOut,
   LogIn,
   UserPlus,
+  ChevronLeft,
 } from 'lucide-react';
 import { Avatar } from './Avatar';
 
@@ -31,6 +34,7 @@ export function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isAuthenticated, profile } = useAuth();
+  const { isCollapsed, toggleSidebar, sidebarWidth } = useSidebar();
   const [signingOut, setSigningOut] = useState(false);
 
   const isAluno = pathname.startsWith('/aluno');
@@ -108,8 +112,27 @@ export function Navigation() {
 
       {/* Sidebar - Desktop Only */}
       {isAluno && (
-        <aside className="hidden lg:flex fixed left-0 top-14 bottom-0 z-40 w-60 flex-col border-r border-[hsl(var(--border))] bg-white">
-          <nav className="flex-1 p-4 space-y-1">
+        <motion.aside
+          initial={false}
+          animate={{ width: sidebarWidth }}
+          transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+          className="hidden lg:flex fixed left-0 top-14 bottom-0 z-40 flex-col border-r border-[hsl(var(--border))] bg-white overflow-hidden"
+        >
+          {/* Toggle Button */}
+          <button
+            onClick={toggleSidebar}
+            className="absolute -right-3 top-6 z-50 w-6 h-6 rounded-full bg-white border border-[hsl(var(--border))] shadow-sm flex items-center justify-center hover:bg-[hsl(var(--muted))] transition-colors"
+            title={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
+          >
+            <motion.div
+              animate={{ rotate: isCollapsed ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ChevronLeft className="w-4 h-4 text-[hsl(var(--muted-foreground))]" />
+            </motion.div>
+          </button>
+
+          <nav className="flex-1 p-3 space-y-1">
             {alunoLinks.map(({ href, label, Icon }) => {
               const active = isActive(href);
               return (
@@ -121,29 +144,52 @@ export function Navigation() {
                       ? 'bg-[hsl(var(--primary-soft))] text-[hsl(var(--primary))]'
                       : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]'
                   }`}
+                  title={isCollapsed ? label : undefined}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" strokeWidth={active ? 2.5 : 2} />
-                  <span>{label}</span>
+                  <AnimatePresence mode="wait">
+                    {!isCollapsed && (
+                      <motion.span
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="whitespace-nowrap overflow-hidden"
+                      >
+                        {label}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 </Link>
               );
             })}
           </nav>
 
           {/* User info */}
-          <div className="p-4 border-t border-[hsl(var(--border))]">
+          <div className="p-3 border-t border-[hsl(var(--border))]">
             <div className="flex items-center gap-3">
               <Avatar name={userName} size="md" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[hsl(var(--foreground))] truncate">
-                  {userName}
-                </p>
-                <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                  Aluno
-                </p>
-              </div>
+              <AnimatePresence mode="wait">
+                {!isCollapsed && (
+                  <motion.div
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 'auto' }}
+                    exit={{ opacity: 0, width: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex-1 min-w-0 overflow-hidden"
+                  >
+                    <p className="text-sm font-medium text-[hsl(var(--foreground))] truncate">
+                      {userName}
+                    </p>
+                    <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                      Aluno
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
-        </aside>
+        </motion.aside>
       )}
 
       {/* Bottom Navigation - Mobile/Tablet Only */}
