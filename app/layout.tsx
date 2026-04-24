@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body className={`${geist.variable} ${geistMono.variable} antialiased`}>
+    <html lang="pt-BR" className="bg-[hsl(220_20%_98%)]">
+      <body className={`${geist.variable} ${geistMono.variable} font-sans antialiased bg-[hsl(220_20%_98%)]`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

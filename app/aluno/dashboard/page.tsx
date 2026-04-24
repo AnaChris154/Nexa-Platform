@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import {
   LayoutGrid,
   Map,
@@ -18,65 +17,63 @@ import {
   TrendingUp,
   Clock,
   ArrowRight,
+  ChevronRight,
 } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
-import { Container } from '@/components/Container';
-import { CardMenu } from '@/components/CardMenu';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
 import { Avatar } from '@/components/Avatar';
-import { ProgressBar } from '@/components/ProgressBar';
 import { SkeletonDashboard } from '@/components/Skeleton';
-import { PageContainer } from '@/components/PageContainer';
 import { ProtectedRoute } from '@/app/contexts/ProtectedRoute';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { getStudentGoal } from '@/services/studentGoalsService';
 import type { StudentGoal } from '@/services/studentGoalsService';
+import Link from 'next/link';
 
 const menuItems = [
   {
     href: '/aluno/plano',
-    icon: <LayoutGrid className="w-5 h-5" />,
+    icon: LayoutGrid,
     title: 'Plano de Estudos',
     description: 'Seu plano personalizado',
-    variant: 'primary' as const,
+    color: 'bg-[hsl(var(--primary))]',
     badge: 'Novo',
   },
   {
     href: '/aluno/trilhas',
-    icon: <Map className="w-5 h-5" />,
+    icon: Map,
     title: 'Trilhas de Estudo',
     description: 'Caminhos de aprendizado',
-    variant: 'accent' as const,
+    color: 'bg-[hsl(var(--accent))]',
   },
   {
     href: '/aluno/disciplinas',
-    icon: <BookOpen className="w-5 h-5" />,
+    icon: BookOpen,
     title: 'Disciplinas',
     description: 'Progresso em cada materia',
-    variant: 'success' as const,
+    color: 'bg-[hsl(var(--success))]',
   },
   {
     href: '/aluno/atividades',
-    icon: <CheckSquare className="w-5 h-5" />,
+    icon: CheckSquare,
     title: 'Atividades',
     description: 'Tarefas e exercicios',
-    variant: 'warning' as const,
+    color: 'bg-[hsl(var(--warning))]',
   },
   {
     href: '/aluno/configuracoes',
-    icon: <Settings className="w-5 h-5" />,
+    icon: Settings,
     title: 'Configuracoes',
     description: 'Gerencie sua conta',
-    variant: 'primary' as const,
+    color: 'bg-[hsl(var(--muted-foreground))]',
   },
   {
     href: '/aluno/onboarding',
-    icon: <RefreshCw className="w-5 h-5" />,
+    icon: RefreshCw,
     title: 'Refazer Diagnostico',
     description: 'Atualize suas metas',
-    variant: 'accent' as const,
+    color: 'bg-[hsl(var(--accent))]',
   },
 ];
 
@@ -130,203 +127,174 @@ function AlunoDashboardContent() {
 
   if (checkingProgress) {
     return (
-      <PageContainer>
+      <div className="min-h-screen bg-[hsl(var(--background))]">
         <Navigation />
-        <div className="sm:pl-56 pt-6 px-4 sm:px-6 lg:px-8 pb-24 sm:pb-8">
-          <div className="max-w-4xl mx-auto">
+        <main className="pt-14 pb-20 lg:pb-8 lg:pl-60">
+          <div className="max-w-4xl mx-auto px-4 py-6">
             <SkeletonDashboard />
           </div>
-        </div>
-      </PageContainer>
+        </main>
+      </div>
     );
   }
 
   return (
-    <PageContainer>
+    <div className="min-h-screen bg-[hsl(var(--background))]">
       <Navigation />
 
-      <div className="sm:pl-56 pt-6 px-4 sm:px-6 lg:px-8 pb-24 sm:pb-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Header Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mb-8"
-          >
-            <div className="flex items-center gap-4 mb-2">
-              <Avatar name={userName} size="lg" />
-              <div>
-                <h1 className="text-2xl font-bold text-[hsl(var(--foreground))]">
-                  Ola, {userName}
-                </h1>
-                <p className="text-[hsl(var(--muted-foreground))]">
-                  {school?.nome || 'Bem-vindo ao NEXA'}
-                </p>
-              </div>
+      <main className="pt-14 pb-20 lg:pb-8 lg:pl-60">
+        <div className="max-w-4xl mx-auto px-4 py-6">
+          
+          {/* Header */}
+          <div className="flex items-center gap-4 mb-6">
+            <Avatar name={userName} size="lg" />
+            <div>
+              <h1 className="text-2xl font-bold text-[hsl(var(--foreground))]">
+                Ola, {userName}
+              </h1>
+              <p className="text-[hsl(var(--muted-foreground))]">
+                {school?.nome || 'Bem-vindo ao NEXA'}
+              </p>
             </div>
-          </motion.div>
+          </div>
 
           {/* Goal Banner */}
           {goal && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              className="mb-6"
-            >
-              <Card variant="elevated" padding="lg" className="bg-[hsl(var(--primary))] border-0">
-                <div className="flex items-center gap-5">
-                  <div className="h-14 w-14 shrink-0 flex items-center justify-center rounded-xl bg-white/20 text-white">
-                    <GoalIcon className="w-7 h-7" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white/70 text-sm font-medium mb-0.5">
-                      Seu Objetivo
-                    </p>
-                    <h2 className="text-xl font-bold text-white">
-                      {goalLabels[goal.objetivo]}
-                    </h2>
-                    {goal.forma_ingresso && (
-                      <p className="text-white/80 text-sm mt-1">
-                        via {goal.forma_ingresso.toUpperCase()}
-                      </p>
-                    )}
-                  </div>
-                  <div className="hidden sm:block">
-                    <Badge
-                      variant={goal.diagnostico_status === 'completed' ? 'success' : 'default'}
-                      size="md"
-                      className="bg-white/20 text-white border-0"
-                    >
-                      {goal.diagnostico_status === 'completed'
-                        ? 'Diagnostico concluido'
-                        : goal.diagnostico_status === 'skipped'
-                        ? 'Pulado'
-                        : 'Pendente'}
-                    </Badge>
-                  </div>
+            <Card className="mb-6 bg-[hsl(var(--primary))] border-0 overflow-hidden">
+              <div className="p-5 flex items-center gap-4">
+                <div className="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-xl bg-white/20">
+                  <GoalIcon className="w-7 h-7 text-white" />
                 </div>
-              </Card>
-            </motion.div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-white/70 font-medium">Seu Objetivo</p>
+                  <h2 className="text-xl font-bold text-white">
+                    {goalLabels[goal.objetivo]}
+                  </h2>
+                  {goal.forma_ingresso && (
+                    <p className="text-sm text-white/80 mt-0.5">
+                      via {goal.forma_ingresso.toUpperCase()}
+                    </p>
+                  )}
+                </div>
+                <Badge
+                  variant={goal.diagnostico_status === 'completed' ? 'success' : 'default'}
+                  className="hidden sm:flex bg-white/20 text-white border-0"
+                >
+                  {goal.diagnostico_status === 'completed' ? 'Concluido' : 'Pendente'}
+                </Badge>
+              </div>
+            </Card>
           )}
 
-          {/* Quick Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.15 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8"
-          >
-            {[
-              { icon: Zap, label: 'Sequencia', value: '5 dias', color: 'text-[hsl(var(--warning))]' },
-              { icon: TrendingUp, label: 'Progresso', value: '32%', color: 'text-[hsl(var(--success))]' },
-              { icon: CheckSquare, label: 'Concluidas', value: '12', color: 'text-[hsl(var(--primary))]' },
-              { icon: Clock, label: 'Tempo', value: '4h 30m', color: 'text-[hsl(var(--accent))]' },
-            ].map((stat, i) => (
-              <Card key={stat.label} padding="sm">
-                <div className="flex items-center gap-3">
-                  <div className={['w-9 h-9 rounded-lg flex items-center justify-center bg-[hsl(var(--muted))]', stat.color].join(' ')}>
-                    <stat.icon className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))]">{stat.label}</p>
-                    <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{stat.value}</p>
-                  </div>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 flex-shrink-0 rounded-lg bg-[hsl(var(--warning-soft))] flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-[hsl(var(--warning))]" />
                 </div>
-              </Card>
-            ))}
-          </motion.div>
+                <div>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Sequencia</p>
+                  <p className="text-lg font-semibold text-[hsl(var(--foreground))]">5 dias</p>
+                </div>
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 flex-shrink-0 rounded-lg bg-[hsl(var(--success-soft))] flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-[hsl(var(--success))]" />
+                </div>
+                <div>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Progresso</p>
+                  <p className="text-lg font-semibold text-[hsl(var(--foreground))]">32%</p>
+                </div>
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 flex-shrink-0 rounded-lg bg-[hsl(var(--primary-soft))] flex items-center justify-center">
+                  <CheckSquare className="w-5 h-5 text-[hsl(var(--primary))]" />
+                </div>
+                <div>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Concluidas</p>
+                  <p className="text-lg font-semibold text-[hsl(var(--foreground))]">12</p>
+                </div>
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 flex-shrink-0 rounded-lg bg-[hsl(var(--accent-soft))] flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-[hsl(var(--accent))]" />
+                </div>
+                <div>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Tempo</p>
+                  <p className="text-lg font-semibold text-[hsl(var(--foreground))]">4h 30m</p>
+                </div>
+              </div>
+            </Card>
+          </div>
 
-          {/* Navigation Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            <h3 className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-4">
-              Navegacao Rapida
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-              {menuItems.map((item, i) => (
-                <motion.div
-                  key={item.href}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.25 + i * 0.05 }}
-                >
-                  <CardMenu {...item} />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+          {/* Quick Navigation */}
+          <h3 className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-3">
+            Navegacao Rapida
+          </h3>
+          <div className="space-y-2 mb-6">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link key={item.href} href={item.href}>
+                  <Card className="p-4 hover:shadow-md hover:border-[hsl(var(--primary)_/_0.3)] transition-all cursor-pointer">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 flex-shrink-0 rounded-xl ${item.color} flex items-center justify-center`}>
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-[15px] font-semibold text-[hsl(var(--foreground))]">
+                            {item.title}
+                          </h4>
+                          {item.badge && (
+                            <Badge variant="primary" size="sm">{item.badge}</Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-[hsl(var(--muted-foreground))]">
+                          {item.description}
+                        </p>
+                      </div>
+                      <ChevronRight className="w-5 h-5 flex-shrink-0 text-[hsl(var(--muted-foreground))]" />
+                    </div>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
 
-          {/* CTA: Start Diagnostic */}
+          {/* CTA */}
           {(!goal || goal.diagnostico_status === 'not_started') && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-            >
-              <Card variant="elevated" padding="lg" className="text-center bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(217_91%_45%)] border-0">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/20 flex items-center justify-center">
-                  <Target className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Comece Seu Diagnostico
-                </h3>
-                <p className="text-white/80 mb-6 max-w-md mx-auto text-sm">
-                  Responda nosso questionario para entender seu nivel em cada disciplina e gerar seu plano de estudos personalizado.
-                </p>
-                <Button
-                  onClick={() => router.push('/aluno/diagnostico')}
-                  size="lg"
-                  variant="secondary"
-                  className="bg-white text-[hsl(var(--primary))] hover:bg-white/90"
-                  iconRight={<ArrowRight className="w-4 h-4" />}
-                >
-                  Iniciar Diagnostico
-                </Button>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* CTA: Skipped Diagnostic */}
-          {goal?.diagnostico_status === 'skipped' && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-            >
-              <Card variant="elevated" padding="lg" className="bg-[hsl(var(--warning-soft))] border-[hsl(var(--warning))]">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[hsl(var(--warning))] flex items-center justify-center shrink-0">
-                    <Clock className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">
-                      Voce pulou o diagnostico
-                    </h3>
-                    <p className="text-[hsl(var(--muted-foreground))] text-sm mb-4">
-                      Faca agora para obter melhores recomendacoes personalizadas
-                    </p>
-                    <Button
-                      onClick={() => router.push('/aluno/diagnostico')}
-                      size="md"
-                      variant="primary"
-                      className="bg-[hsl(var(--warning))] hover:bg-[hsl(38_92%_45%)]"
-                      iconRight={<ArrowRight className="w-4 h-4" />}
-                    >
-                      Fazer Agora
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
+            <Card className="p-6 text-center bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(217_91%_45%)] border-0">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/20 flex items-center justify-center">
+                <Target className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">
+                Comece Seu Diagnostico
+              </h3>
+              <p className="text-white/80 mb-6 max-w-md mx-auto text-sm">
+                Responda nosso questionario para gerar seu plano de estudos personalizado.
+              </p>
+              <Button
+                onClick={() => router.push('/aluno/diagnostico')}
+                size="lg"
+                variant="secondary"
+                className="bg-white text-[hsl(var(--primary))] hover:bg-white/90"
+                iconRight={<ArrowRight className="w-4 h-4" />}
+              >
+                Iniciar Diagnostico
+              </Button>
+            </Card>
           )}
         </div>
-      </div>
-    </PageContainer>
+      </main>
+    </div>
   );
 }
 

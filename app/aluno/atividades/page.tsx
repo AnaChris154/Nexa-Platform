@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import {
   Inbox,
   Sparkles,
@@ -12,11 +11,8 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
-import { Header } from '@/components/Header';
-import { Container } from '@/components/Container';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
-import { PageContainer } from '@/components/PageContainer';
 import { ProtectedRoute } from '@/app/contexts/ProtectedRoute';
 
 const infoCards = [
@@ -63,25 +59,24 @@ const nextSteps = [
 
 function AtividadesContent() {
   return (
-    <PageContainer>
+    <div className="min-h-screen bg-[hsl(var(--background))]">
       <Navigation />
-      <Header
-        title="Atividades"
-        description="Tarefas e exercicios para praticar"
-      />
 
-      <Container className="py-8">
-        {/* Empty State */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <Card
-            variant="elevated"
-            padding="lg"
-            className="text-center bg-[hsl(var(--primary))] border-0"
-          >
+      <main className="pt-14 pb-20 lg:pb-8 lg:pl-60">
+        <div className="max-w-4xl mx-auto px-4 py-6">
+          
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-[hsl(var(--foreground))]">
+              Atividades
+            </h1>
+            <p className="text-[hsl(var(--muted-foreground))]">
+              Tarefas e exercicios para praticar
+            </p>
+          </div>
+
+          {/* Empty State */}
+          <Card className="p-6 text-center bg-[hsl(var(--primary))] border-0 mb-6">
             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/20 flex items-center justify-center">
               <Inbox className="w-8 h-8 text-white" />
             </div>
@@ -89,7 +84,7 @@ function AtividadesContent() {
               Nenhuma Atividade Pendente
             </h2>
             <p className="text-white/80 mb-6 text-sm max-w-md mx-auto">
-              Continue estudando para desbloquear novas tarefas e exercicios!
+              Continue estudando para desbloquear novas tarefas!
             </p>
             <Link href="/aluno/dashboard">
               <Button
@@ -101,31 +96,20 @@ function AtividadesContent() {
               </Button>
             </Link>
           </Card>
-        </motion.div>
 
-        {/* Info Cards */}
-        <h3 className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-4">
-          Como funcionam as atividades
-        </h3>
+          {/* Info Cards */}
+          <h3 className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-4">
+            Como funcionam as atividades
+          </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-          {infoCards.map((item, i) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
-            >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+            {infoCards.map((item) => (
               <Card
-                className={[item.bgColor, item.borderColor].join(' ')}
+                key={item.title}
+                className={`p-4 ${item.bgColor} ${item.borderColor}`}
               >
                 <div className="flex items-start gap-4">
-                  <div
-                    className={[
-                      'w-10 h-10 rounded-xl flex items-center justify-center shrink-0',
-                      item.color,
-                    ].join(' ')}
-                  >
+                  <div className={`w-10 h-10 flex-shrink-0 rounded-xl ${item.color} flex items-center justify-center`}>
                     <item.icon className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -138,19 +122,13 @@ function AtividadesContent() {
                   </div>
                 </div>
               </Card>
-            </motion.div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        {/* Next Steps */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="bg-[hsl(var(--primary-soft))] border-[hsl(var(--primary)_/_0.2)] mb-6">
+          {/* Next Steps */}
+          <Card className="p-4 bg-[hsl(var(--primary-soft))] border-[hsl(var(--primary)_/_0.2)] mb-6">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[hsl(var(--primary))] flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 flex-shrink-0 rounded-xl bg-[hsl(var(--primary))] flex items-center justify-center">
                 <Lightbulb className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -165,22 +143,22 @@ function AtividadesContent() {
               </div>
             </div>
           </Card>
-        </motion.div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Link href="/aluno/plano">
-            <Button size="lg" variant="secondary" fullWidth>
-              Meu Plano
-            </Button>
-          </Link>
-          <Link href="/aluno/dashboard">
-            <Button size="lg" variant="outline" fullWidth>
-              Dashboard
-            </Button>
-          </Link>
+          <div className="grid grid-cols-2 gap-3">
+            <Link href="/aluno/plano">
+              <Button size="lg" variant="secondary" fullWidth>
+                Meu Plano
+              </Button>
+            </Link>
+            <Link href="/aluno/dashboard">
+              <Button size="lg" variant="outline" fullWidth>
+                Dashboard
+              </Button>
+            </Link>
+          </div>
         </div>
-      </Container>
-    </PageContainer>
+      </main>
+    </div>
   );
 }
 
