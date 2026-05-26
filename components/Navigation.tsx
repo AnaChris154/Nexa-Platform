@@ -1,11 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '@/app/contexts/AuthContext';
-import { signOut } from '@/services/authService';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Map,
@@ -14,204 +10,176 @@ import {
   Settings,
   Zap,
   LogOut,
-  LogIn,
-  UserPlus,
-  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
-import { Avatar } from './Avatar';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/app/contexts/AuthContext';
+import { signOut } from '@/services/authService';
+import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { useState } from 'react';
 
 const alunoLinks = [
   { href: '/aluno/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
-  { href: '/aluno/plano', label: 'Plano', Icon: Zap },
+  { href: '/aluno/plano', label: 'Plano de Estudos', Icon: Zap },
   { href: '/aluno/trilhas', label: 'Trilhas', Icon: Map },
   { href: '/aluno/disciplinas', label: 'Disciplinas', Icon: BookOpen },
   { href: '/aluno/atividades', label: 'Atividades', Icon: CheckSquare },
-  { href: '/aluno/configuracoes', label: 'Config.', Icon: Settings },
 ];
 
 export function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isAuthenticated, profile } = useAuth();
-  const [signingOut, setSigningOut] = useState(false);
-
-  const isAluno = pathname.startsWith('/aluno');
+  const { user, profile } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = async () => {
-    setSigningOut(true);
-    const { error } = await signOut();
-    if (!error) router.push('/');
-    setSigningOut(false);
+    await signOut();
+    router.push('/login');
   };
 
   const isActive = (path: string) => pathname === path;
-
-  const userName = profile?.display_name || user?.email?.split('@')[0] || 'Usuario';
+  const userName = profile?.display_name || user?.email?.split('@')[0] || 'Aluno';
+  const userInitial = userName.charAt(0).toUpperCase();
 
   return (
     <>
-      {/* Top Bar */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-[hsl(var(--border))]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-lg bg-[hsl(var(--primary))] flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
-                <Zap className="w-4 h-4 text-white" />
+      {/* Barra Lateral - Desktop */}
+      <aside
+        className={cn(
+          'hidden md:flex relative flex-col h-full bg-transparent transition-all duration-300 ease-in-out',
+          isCollapsed ? 'w-20' : 'w-72'
+        )}
+      >
+        <div
+          className={cn(
+            'flex items-center h-20 px-8',
+            isCollapsed ? 'justify-center' : 'justify-between'
+          )}
+        >
+          {!isCollapsed && (
+            <Link href="/aluno/dashboard" className="flex items-center gap-3">
+              <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20">
+                <Zap className="w-6 h-6 text-primary-foreground" />
               </div>
-              <span className="font-bold text-lg text-[hsl(var(--primary))]">
-                NEXA
-              </span>
+              <span className="text-xl font-bold tracking-tight">Nexa</span>
             </Link>
-
-            {/* Right Side */}
-            <div className="flex items-center gap-2">
-              {/* Not Authenticated */}
-              {!isAuthenticated && (
-                <div className="hidden sm:flex items-center gap-1">
-                  {!pathname.includes('/login') && (
-                    <Link
-                      href="/login"
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] transition-colors"
-                    >
-                      <LogIn className="w-4 h-4" />
-                      Entrar
-                    </Link>
-                  )}
-                  {!pathname.includes('/signup') && (
-                    <Link
-                      href="/signup"
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-[hsl(var(--primary))] bg-[hsl(var(--primary-soft))] hover:bg-[hsl(217_100%_93%)] transition-colors"
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      Cadastrar
-                    </Link>
-                  )}
-                </div>
-              )}
-
-              {/* Authenticated */}
-              {isAuthenticated && (
-                <div className="flex items-center gap-2">
-                  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[hsl(var(--muted))]">
-                    <Avatar name={userName} size="sm" />
-                    <span className="text-sm font-medium text-[hsl(var(--foreground))] max-w-[120px] truncate">
-                      {userName}
-                    </span>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    disabled={signingOut}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive-soft))] transition-colors disabled:opacity-50"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span className="hidden sm:inline">
-                      {signingOut ? 'Saindo...' : 'Sair'}
-                    </span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+          )}
+          {isCollapsed && (
+             <div className="p-2 bg-primary rounded-xl shadow-lg shadow-primary/20">
+                <Zap className="w-6 h-6 text-primary-foreground" />
+             </div>
+          )}
         </div>
-      </nav>
 
-      {/* Bottom Tab Bar (mobile) */}
-      {isAluno && (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 sm:hidden bg-white/95 backdrop-blur-lg border-t border-[hsl(var(--border))]">
-          <div className="flex items-center justify-around px-2 py-2 safe-area-inset-bottom">
-            {alunoLinks.map(({ href, label, Icon }) => {
-              const active = isActive(href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className="flex flex-col items-center gap-0.5 px-2 py-1.5 min-w-[60px]"
-                >
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      scale: active ? 1.1 : 1,
-                      backgroundColor: active
-                        ? 'hsl(var(--primary-soft))'
-                        : 'transparent',
-                    }}
-                    transition={{ duration: 0.2 }}
-                    className="w-10 h-10 flex items-center justify-center rounded-xl"
-                  >
-                    <Icon
-                      className={[
-                        'w-5 h-5 transition-colors',
-                        active
-                          ? 'text-[hsl(var(--primary))]'
-                          : 'text-[hsl(var(--muted-foreground))]',
-                      ].join(' ')}
-                      strokeWidth={active ? 2.5 : 2}
-                    />
-                  </motion.div>
-                  <span
-                    className={[
-                      'text-[10px] font-medium transition-colors',
-                      active
-                        ? 'text-[hsl(var(--primary))]'
-                        : 'text-[hsl(var(--muted-foreground))]',
-                    ].join(' ')}
-                  >
-                    {label}
-                  </span>
-                </Link>
-              );
-            })}
+        <nav className="flex-1 px-4 py-6 space-y-4">
+          <div className="space-y-1">
+            {alunoLinks.map(({ href, label, Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  'flex items-center gap-4 px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-200 group',
+                  isActive(href)
+                    ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
+                    : 'text-muted-foreground hover:bg-white hover:text-foreground hover:shadow-sm',
+                  isCollapsed && 'justify-center px-0'
+                )}
+              >
+                <Icon className={cn("w-6 h-6 shrink-0", isActive(href) ? "" : "group-hover:scale-110 transition-transform")} />
+                {!isCollapsed && <span className="text-base">{label}</span>}
+              </Link>
+            ))}
           </div>
         </nav>
-      )}
 
-      {/* Sidebar (desktop) */}
-      {isAluno && (
-        <aside className="hidden sm:flex fixed left-0 top-14 bottom-0 z-40 w-56 flex-col border-r border-[hsl(var(--border))] bg-white pt-6 pb-4 px-3">
-          <div className="flex-1 flex flex-col gap-1">
-            {alunoLinks.map(({ href, label, Icon }) => {
-              const active = isActive(href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={[
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200',
-                    active
-                      ? 'bg-[hsl(var(--primary-soft))] text-[hsl(var(--primary))]'
-                      : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]',
-                  ].join(' ')}
-                >
-                  <Icon
-                    className="w-5 h-5 shrink-0"
-                    strokeWidth={active ? 2.5 : 2}
-                  />
-                  {label}
-                  {active && (
-                    <ChevronRight className="ml-auto w-4 h-4 opacity-50" />
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* User info at bottom */}
-          <div className="mt-auto pt-4 border-t border-[hsl(var(--border))]">
-            <div className="flex items-center gap-3 px-3 py-2">
-              <Avatar name={userName} size="md" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[hsl(var(--foreground))] truncate">
-                  {userName}
-                </p>
-                <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                  Aluno
-                </p>
+        <div className="px-6 py-6 mt-auto space-y-4">
+          <div
+            className={cn(
+              'flex items-center gap-3 p-2 rounded-2xl bg-white/50 border border-white',
+              isCollapsed && 'justify-center border-0 bg-transparent'
+            )}
+          >
+            <Avatar className="w-10 h-10 border-2 border-white shadow-sm">
+              <AvatarFallback className="bg-primary/10 text-primary font-bold">{userInitial}</AvatarFallback>
+            </Avatar>
+            {!isCollapsed && (
+              <div className="flex-1 overflow-hidden">
+                <p className="text-sm font-bold truncate">{userName}</p>
+                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Aluno(a)</p>
               </div>
-            </div>
+            )}
           </div>
-        </aside>
-      )}
+
+          <div className="space-y-1">
+            <Link
+              href="/aluno/configuracoes"
+              className={cn(
+                'flex items-center w-full gap-4 px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-200',
+                isActive('/aluno/configuracoes')
+                  ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
+                  : 'text-muted-foreground hover:bg-white hover:text-foreground hover:shadow-sm',
+                isCollapsed && 'justify-center px-0'
+              )}
+            >
+              <Settings className="w-6 h-6 shrink-0" />
+              {!isCollapsed && <span className="text-base">Configurações</span>}
+            </Link>
+
+            <Button
+              variant="ghost"
+              size={isCollapsed ? 'icon' : 'default'}
+              className="w-full justify-start gap-4 px-4 py-6 hover:bg-destructive/10 hover:text-destructive rounded-2xl transition-all duration-200 group"
+              onClick={handleLogout}
+            >
+              <LogOut className="w-6 h-6 shrink-0 group-hover:translate-x-1 transition-transform" />
+              {!isCollapsed && <span className="text-base font-medium">Sair da conta</span>}
+            </Button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Barra Inferior - Mobile */}
+      <nav className="md:hidden fixed bottom-6 left-6 right-6 h-16 bg-background/95 backdrop-blur-md border border-white/20 rounded-2xl flex items-center justify-around px-4 z-50 shadow-2xl shadow-black/10">
+        {alunoLinks.slice(0, 4).map(({ href, label, Icon }) => {
+          const active = isActive(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                'flex flex-col items-center justify-center flex-1 py-1 gap-1 transition-all duration-200',
+                active ? 'text-primary scale-110' : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              <div className={cn(
+                "p-2 rounded-xl transition-colors",
+                active ? "bg-primary/10" : ""
+              )}>
+                <Icon className="w-6 h-6" />
+              </div>
+              <span className="text-[9px] font-bold uppercase tracking-tight">{label.split(' ')[0]}</span>
+            </Link>
+          );
+        })}
+        <Link
+          href="/aluno/configuracoes"
+          className={cn(
+            'flex flex-col items-center justify-center flex-1 py-1 gap-1 transition-all duration-200',
+            isActive('/aluno/configuracoes') ? 'text-primary scale-110' : 'text-muted-foreground hover:text-foreground'
+          )}
+        >
+          <div className={cn(
+            "p-2 rounded-xl transition-colors",
+            isActive('/aluno/configuracoes') ? "bg-primary/10" : ""
+          )}>
+            <Settings className="w-6 h-6" />
+          </div>
+          <span className="text-[9px] font-bold uppercase tracking-tight">Conta</span>
+        </Link>
+      </nav>
     </>
   );
 }

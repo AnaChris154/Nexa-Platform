@@ -1,45 +1,52 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import type { ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/app/contexts/AuthContext';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  BookOpen,
+  CheckSquare,
+  LayoutDashboard,
+  Map,
+  Settings,
+  Zap,
+} from 'lucide-react';
 
-interface HeaderProps {
-  title: string;
-  description?: string;
-  action?: ReactNode;
-}
+const pageTitles: { [key: string]: string } = {
+  '/aluno/dashboard': 'Dashboard',
+  '/aluno/plano': 'Plano de Estudos',
+  '/aluno/trilhas': 'Trilhas de Estudo',
+  '/aluno/disciplinas': 'Disciplinas',
+  '/aluno/atividades': 'Atividades',
+  '/aluno/configuracoes': 'Configurações',
+};
 
-export function Header({ title, description, action }: HeaderProps) {
+const pageIcons: { [key: string]: React.ReactNode } = {
+  '/aluno/dashboard': <LayoutDashboard className="w-6 h-6" />,
+  '/aluno/plano': <Zap className="w-6 h-6" />,
+  '/aluno/trilhas': <Map className="w-6 h-6" />,
+  '/aluno/disciplinas': <BookOpen className="w-6 h-6" />,
+  '/aluno/atividades': <CheckSquare className="w-6 h-6" />,
+  '/aluno/configuracoes': <Settings className="w-6 h-6" />,
+};
+
+export function Header() {
+  const pathname = usePathname();
+
+  const title = pageTitles[pathname] || 'Nexa';
+  const icon = pageIcons[pathname] || <Zap className="w-6 h-6" />;
+
   return (
-    <div className="border-b border-[hsl(var(--border))] bg-white/80 backdrop-blur-sm">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 sm:pl-64 py-6 md:py-8">
-        <div className="flex items-start justify-between gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-[hsl(var(--foreground))] leading-tight">
-              {title}
-            </h1>
-            {description && (
-              <p className="mt-1 text-sm md:text-base text-[hsl(var(--muted-foreground))]">
-                {description}
-              </p>
-            )}
-          </motion.div>
-          {action && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-              className="shrink-0"
-            >
-              {action}
-            </motion.div>
-          )}
+    <header className="flex items-center h-20 px-8 bg-transparent">
+      <div className="flex items-center gap-4">
+        <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
+          {icon}
+        </div>
+        <div>
+          <h1 className="text-xl font-bold tracking-tight">{title}</h1>
+          <p className="text-xs text-muted-foreground font-medium">Área do Aluno</p>
         </div>
       </div>
-    </div>
+    </header>
   );
 }

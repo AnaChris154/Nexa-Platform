@@ -1,0 +1,44 @@
+[
+  {
+    "id": "MAT_INT",
+    "nome": "Interpretação Matemática",
+    "descricao": "Capacidade de traduzir situações do cotidiano para a linguagem matemática.",
+    "depende_de": null,
+    "micro_habilidades": ["LEIT_ENUN", "IDENT_VAR", "MODEL_MAT"]
+  },
+  {
+    "id": "MAT_OPE",
+    "nome": "Operações Básicas",
+    "descricao": "Domínio das quatro operações fundamentais e suas propriedades.",
+    "depende_de": null,
+    "micro_habilidades": ["SOMA_SUB", "MULT_DIV", "POT_RAD"]
+  },
+  {
+    "id": "MAT_FRA",
+    "nome": "Frações",
+    "descricao": "Compreensão de partes de um todo, proporções fracionárias e operações com frações.",
+    "depende_de": "MAT_OPE",
+    "micro_habilidades": ["EQUIV_FRAC", "OPER_FRAC"]
+  },
+  {
+    "id": "MAT_PROP",
+    "nome": "Proporcionalidade",
+    "descricao": "Razões, proporções, regra de três e porcentagem.",
+    "depende_de": "MAT_FRA",
+    "micro_habilidades": ["REGRA_TRES", "PORCENT", "ESC_MAPA"]
+  },
+  {
+    "id": "MAT_GRA",
+    "nome": "Leitura Gráfica",
+    "descricao": "Extração e análise de dados contidos em gráficos e tabelas.",
+    "depende_de": "MAT_INT",
+    "micro_habilidades": ["INTERP_TAB", "INTERP_GRAF_LIN", "INTERP_GRAF_BARR"]
+  },
+  {
+    "id": "MAT_ALG",
+    "nome": "Álgebra Básica",
+    "descricao": "Resolução de equações e expressões algébricas simples.",
+    "depende_de": "MAT_OPE",
+    "micro_habilidades": ["EQUAC_1G", "SIST_LIN", "FUNCAO_CONC"]
+  }
+]

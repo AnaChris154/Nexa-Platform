@@ -2,26 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import {
-  LayoutGrid,
-  AlertCircle,
-  Target,
-  GraduationCap,
-  Briefcase,
-  BookMarked,
-  Lightbulb,
-  ArrowRight,
-  Inbox,
-} from 'lucide-react';
-import { Navigation } from '@/components/Navigation';
-import { Header } from '@/components/Header';
-import { Container } from '@/components/Container';
-import { Card } from '@/components/Card';
-import { Button } from '@/components/Button';
-import { Badge } from '@/components/Badge';
-import { ProgressBar } from '@/components/ProgressBar';
-import { Skeleton, SkeletonCard } from '@/components/Skeleton';
+import { LayoutGrid, AlertCircle, Target, GraduationCap, Briefcase, BookMarked, Lightbulb, ArrowRight, Inbox } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 import { PageContainer } from '@/components/PageContainer';
 import { ProtectedRoute } from '@/app/contexts/ProtectedRoute';
 import { useAuth } from '@/app/contexts/AuthContext';
@@ -30,44 +17,14 @@ import { getStudentGoal } from '@/services/studentGoalsService';
 import type { StudyPlan } from '@/services/studyPlanService';
 import type { StudentGoal } from '@/services/studentGoalsService';
 
-const goalIcons = {
-  faculdade: GraduationCap,
-  mercado: Briefcase,
-  escola: BookMarked,
-};
-
-const goalLabels = {
-  faculdade: 'Faculdade',
-  mercado: 'Mercado de Trabalho',
-  escola: 'Melhorar na Escola',
-};
-
+const goalIcons = { faculdade: GraduationCap, mercado: Briefcase, escola: BookMarked };
+const goalLabels = { faculdade: 'Faculdade', mercado: 'Mercado de Trabalho', escola: 'Melhorar na Escola' };
 const prioridadeConfig = {
-  alta: {
-    label: 'Alta Prioridade',
-    bg: 'bg-[hsl(var(--destructive-soft))]',
-    border: 'border-[hsl(var(--destructive)_/_0.2)]',
-    badge: 'danger' as const,
-  },
-  media: {
-    label: 'Media Prioridade',
-    bg: 'bg-[hsl(var(--warning-soft))]',
-    border: 'border-[hsl(var(--warning)_/_0.2)]',
-    badge: 'warning' as const,
-  },
-  baixa: {
-    label: 'Baixa Prioridade',
-    bg: 'bg-[hsl(var(--success-soft))]',
-    border: 'border-[hsl(var(--success)_/_0.2)]',
-    badge: 'success' as const,
-  },
+  alta:  { label: 'Alta Prioridade',  bg: 'bg-red-50',    border: 'border-red-200'    },
+  media: { label: 'Media Prioridade', bg: 'bg-yellow-50', border: 'border-yellow-200' },
+  baixa: { label: 'Baixa Prioridade', bg: 'bg-green-50',  border: 'border-green-200'  },
 };
-
-const nivelConfig = {
-  baixo: { value: 25, variant: 'primary' as const },
-  medio: { value: 50, variant: 'warning' as const },
-  alto: { value: 85, variant: 'success' as const },
-};
+const nivelConfig = { baixo: { value: 25 }, medio: { value: 50 }, alto: { value: 85 } };
 
 function PlanoContent() {
   const { user } = useAuth();
@@ -78,36 +35,19 @@ function PlanoContent() {
 
   useEffect(() => {
     const loadPlano = async () => {
-      if (!user?.id) {
-        setLoading(false);
-        return;
-      }
-
+      if (!user?.id) { setLoading(false); return; }
       try {
         const { goal: studentGoal } = await getStudentGoal(user.id);
         setGoal(studentGoal || null);
-
         if (!studentGoal || studentGoal.diagnostico_status !== 'completed') {
-          setPlano([]);
-          setLoading(false);
-          return;
+          setPlano([]); setLoading(false); return;
         }
-
         const { plano: studyPlan, error: planError } = await getStudyPlan(user.id);
-
-        if (planError) {
-          setError(planError.message);
-          setPlano([]);
-        } else {
-          setPlano(studyPlan || []);
-        }
+        if (planError) { setError(planError.message); setPlano([]); }
+        else { setPlano(studyPlan || []); }
         setLoading(false);
-      } catch {
-        setError('Erro ao carregar plano de estudos');
-        setLoading(false);
-      }
+      } catch { setError('Erro ao carregar plano'); setLoading(false); }
     };
-
     loadPlano();
   }, [user]);
 
@@ -115,219 +55,87 @@ function PlanoContent() {
 
   return (
     <PageContainer>
-      <Navigation />
-      <Header
-        title="Plano de Estudos"
-        description="Seu mapa personalizado de aprendizado"
-      />
-      <Container className="py-8">
+      <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-3xl flex flex-col gap-6">
+        <div>
+          <h1 className="text-2xl font-bold mb-1">Plano de Estudos</h1>
+          <p className="text-muted-foreground text-sm">Seu mapa personalizado de aprendizado</p>
+        </div>
         {loading && (
           <div className="space-y-4">
-            <Skeleton height={100} />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
+            <Skeleton className="h-24 w-full rounded-xl" />
+            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full rounded-xl" />)}
           </div>
         )}
-
         {error && (
-          <Card className="bg-[hsl(var(--destructive-soft))] border-[hsl(var(--destructive))]">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[hsl(var(--destructive))] flex items-center justify-center shrink-0">
-                <AlertCircle className="w-5 h-5 text-white" />
-              </div>
+          <Card className="border-destructive bg-destructive/10 mb-4">
+            <CardContent className="flex items-start gap-4 py-4">
+              <AlertCircle className="size-5 text-destructive shrink-0" />
               <div>
-                <h3 className="font-semibold text-[hsl(var(--destructive))]">
-                  Erro ao carregar plano
-                </h3>
-                <p className="text-sm text-[hsl(var(--destructive))] mt-1">{error}</p>
-                <Link href="/aluno/dashboard">
-                  <Button size="sm" variant="secondary" className="mt-3">
-                    Voltar ao Dashboard
-                  </Button>
-                </Link>
+                <h3 className="font-semibold text-destructive">Erro ao carregar plano</h3>
+                <p className="text-sm text-destructive mt-1">{error}</p>
               </div>
-            </div>
+            </CardContent>
           </Card>
         )}
-
-        {/* No goal */}
         {!loading && !goal?.id && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Card
-              variant="elevated"
-              padding="lg"
-              className="text-center bg-[hsl(var(--accent))] border-0"
-            >
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/20 flex items-center justify-center">
-                <LayoutGrid className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-xl font-bold text-white mb-2">
-                Plano Nao Disponivel
-              </h2>
-              <p className="text-white/80 mb-6 text-sm max-w-sm mx-auto">
-                Voce precisa completar o diagnostico para gerar seu plano personalizado.
-              </p>
+          <Card className="text-center bg-primary text-primary-foreground border-0">
+            <CardContent className="py-10">
+              <div className="size-16 mx-auto mb-4 rounded-2xl bg-white/20 flex items-center justify-center"><LayoutGrid className="size-8" /></div>
+              <h2 className="text-xl font-bold mb-2">Plano Nao Disponivel</h2>
+              <p className="text-primary-foreground/80 mb-6 text-sm max-w-sm mx-auto">Complete o diagnostico para gerar seu plano.</p>
               <Link href="/aluno/diagnostico">
-                <Button
-                  variant="secondary"
-                  className="bg-white text-[hsl(var(--accent))]"
-                  iconRight={<ArrowRight className="w-4 h-4" />}
-                >
-                  Iniciar Diagnostico
-                </Button>
+                <Button variant="secondary" className="bg-white text-primary hover:bg-white/90">Iniciar Diagnostico <ArrowRight className="ml-2 size-4" /></Button>
               </Link>
-            </Card>
-          </motion.div>
+            </CardContent>
+          </Card>
         )}
-
-        {/* With plan */}
         {!loading && goal?.diagnostico_status === 'completed' && plano.length > 0 && (
           <>
-            {/* Goal Banner */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
-            >
-              <Card
-                variant="elevated"
-                padding="lg"
-                className="bg-[hsl(var(--primary))] border-0"
-              >
-                <div className="flex items-center gap-5">
-                  <div className="h-14 w-14 shrink-0 flex items-center justify-center rounded-xl bg-white/20 text-white">
-                    <GoalIcon className="w-7 h-7" />
-                  </div>
-                  <div>
-                    <p className="text-white/70 text-xs font-medium uppercase tracking-wide">
-                      Seu Objetivo
-                    </p>
-                    <h2 className="text-xl font-bold text-white">
-                      {goalLabels[goal.objetivo]}
-                    </h2>
-                    {goal.forma_ingresso && (
-                      <p className="text-white/80 text-sm mt-0.5">
-                        via {goal.forma_ingresso.toUpperCase()}
-                      </p>
-                    )}
-                  </div>
+            <Card className="mb-8 bg-primary text-primary-foreground border-0">
+              <CardContent className="flex items-center gap-5 py-5">
+                <div className="size-14 shrink-0 flex items-center justify-center rounded-xl bg-white/20"><GoalIcon className="size-7" /></div>
+                <div>
+                  <p className="text-primary-foreground/70 text-xs uppercase tracking-wide">Seu Objetivo</p>
+                  <h2 className="text-xl font-bold">{goalLabels[goal.objetivo]}</h2>
                 </div>
-              </Card>
-            </motion.div>
-
-            <h3 className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-4">
-              Disciplinas por Prioridade
-            </h3>
-
+              </CardContent>
+            </Card>
             <div className="space-y-3 mb-8">
-              {plano.map((materia, i) => {
+              {plano.map((materia) => {
                 const prioConfig = prioridadeConfig[materia.prioridade];
                 const nivConfig = nivelConfig[materia.nivel];
-
                 return (
-                  <motion.div
-                    key={materia.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: i * 0.05 }}
-                  >
-                    <Card
-                      hoverable
-                      className={[prioConfig.bg, prioConfig.border].join(' ')}
-                    >
+                  <Card key={materia.id} className={cn('border', prioConfig.border, prioConfig.bg)}>
+                    <CardContent className="py-4">
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-semibold text-[hsl(var(--foreground))] capitalize">
-                          {materia.materia}
-                        </h4>
-                        <Badge variant={prioConfig.badge}>
-                          {prioConfig.label}
-                        </Badge>
+                        <h4 className="font-semibold capitalize">{materia.materia}</h4>
+                        <Badge variant="outline">{prioConfig.label}</Badge>
                       </div>
-                      <ProgressBar
-                        value={nivConfig.value}
-                        variant={nivConfig.variant}
-                        size="md"
-                        className="mb-2"
-                      />
-                      <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                        Nivel detectado: <span className="font-medium capitalize">{materia.nivel}</span>
-                      </p>
-                    </Card>
-                  </motion.div>
+                      <Progress value={nivConfig.value} className="mb-2 h-2" />
+                      <p className="text-xs text-muted-foreground">Nivel: <span className="font-medium capitalize">{materia.nivel}</span></p>
+                    </CardContent>
+                  </Card>
                 );
               })}
             </div>
-
-            {/* Tip */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <Card className="bg-[hsl(var(--primary-soft))] border-[hsl(var(--primary)_/_0.2)] mb-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-[hsl(var(--primary))] flex items-center justify-center shrink-0">
-                    <Lightbulb className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-[hsl(var(--foreground))] mb-1">
-                      Como usar seu plano
-                    </h4>
-                    <p className="text-sm text-[hsl(var(--muted-foreground))]">
-                      Comece pelos topicos com alta prioridade. Combine com as trilhas de estudo para uma jornada estruturada!
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-
             <div className="grid grid-cols-2 gap-3">
-              <Link href="/aluno/trilhas">
-                <Button size="lg" variant="secondary" fullWidth>
-                  Explorar Trilhas
-                </Button>
-              </Link>
-              <Link href="/aluno/dashboard">
-                <Button size="lg" variant="outline" fullWidth>
-                  Dashboard
-                </Button>
-              </Link>
+              <Link href="/aluno/trilhas"><Button variant="secondary" size="lg" className="w-full">Trilhas</Button></Link>
+              <Link href="/aluno/dashboard"><Button variant="outline" size="lg" className="w-full">Dashboard</Button></Link>
             </div>
           </>
         )}
-
-        {/* Empty plan */}
         {!loading && goal?.diagnostico_status === 'completed' && plano.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-16"
-          >
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[hsl(var(--muted))] flex items-center justify-center">
-              <Inbox className="w-8 h-8 text-[hsl(var(--muted-foreground))]" />
-            </div>
+          <div className="text-center py-16">
+            <Inbox className="size-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-semibold text-lg mb-2">Plano Vazio</h3>
-            <p className="text-[hsl(var(--muted-foreground))] mb-6 text-sm">
-              Nenhum plano disponivel no momento.
-            </p>
-            <Link href="/aluno/dashboard">
-              <Button variant="outline">Voltar ao Dashboard</Button>
-            </Link>
-          </motion.div>
+            <Link href="/aluno/dashboard"><Button variant="outline">Voltar</Button></Link>
+          </div>
         )}
-      </Container>
+      </div>
     </PageContainer>
   );
 }
 
 export default function PlanoPage() {
-  return (
-    <ProtectedRoute>
-      <PlanoContent />
-    </ProtectedRoute>
-  );
+  return <PlanoContent />;
 }

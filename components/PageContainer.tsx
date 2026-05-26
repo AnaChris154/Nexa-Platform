@@ -1,4 +1,7 @@
+'use client';
+
 import { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 
 interface PageContainerProps {
   children: ReactNode;
@@ -7,9 +10,7 @@ interface PageContainerProps {
 
 export function PageContainer({ children, className = '' }: PageContainerProps) {
   return (
-    <div
-      className={`min-h-screen bg-gradient-bg pb-20 sm:pb-0 ${className}`}
-    >
+    <div className={cn('w-full mx-auto px-4 sm:px-6 lg:px-8 py-8', className)}>
       {children}
     </div>
   );

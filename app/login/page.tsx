@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Zap, Target, Map, BarChart3, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/Button';
-import { Input } from '@/components/Input';
-import { Card } from '@/components/Card';
+import { Zap, Target, Map, BarChart3, CheckCircle, AlertCircle, BookOpen, GraduationCap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 import { signIn } from '@/services/authService';
 import { useAuth } from '@/app/contexts/AuthContext';
 
@@ -22,6 +22,7 @@ export default function LoginPage() {
   const { isAuthenticated, profile } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [userType, setUserType] = useState<'aluno' | 'professor'>('aluno');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -156,6 +157,42 @@ export default function LoginPage() {
             </p>
           </motion.div>
 
+          {/* Role Selector */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.05 }}
+            className="mb-6"
+          >
+            <p className="text-sm font-medium text-[hsl(var(--foreground))] mb-3">Acessar como:</p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setUserType('aluno')}
+                className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 cursor-pointer ${
+                  userType === 'aluno'
+                    ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary-soft))]'
+                    : 'border-[hsl(var(--border))] bg-transparent hover:border-[hsl(var(--primary)_/_0.4)]'
+                }`}
+              >
+                <BookOpen className={`w-5 h-5 ${userType === 'aluno' ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`} />
+                <span className={`text-sm font-semibold ${userType === 'aluno' ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--foreground))]'}`}>Aluno</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setUserType('professor')}
+                className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all duration-200 cursor-pointer ${
+                  userType === 'professor'
+                    ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary-soft))]'
+                    : 'border-[hsl(var(--border))] bg-transparent hover:border-[hsl(var(--primary)_/_0.4)]'
+                }`}
+              >
+                <GraduationCap className={`w-5 h-5 ${userType === 'professor' ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`} />
+                <span className={`text-sm font-semibold ${userType === 'professor' ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--foreground))]'}`}>Professor</span>
+              </button>
+            </div>
+          </motion.div>
+
           {/* Alerts */}
           {success && (
             <motion.div
@@ -234,22 +271,6 @@ export default function LoginPage() {
               {loading ? 'Entrando...' : 'Entrar'}
             </Button>
           </motion.form>
-
-          {/* Back link */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="mt-6 text-center"
-          >
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors font-medium"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Voltar para o inicio
-            </Link>
-          </motion.div>
         </div>
       </div>
     </main>

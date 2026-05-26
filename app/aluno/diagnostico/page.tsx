@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
 import { Header } from '@/components/Header';
 import { Container } from '@/components/Container';
-import { Button } from '@/components/Button';
+import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
 import { ProtectedRoute } from '@/app/contexts/ProtectedRoute';
 import { useAuth } from '@/app/contexts/AuthContext';
@@ -79,23 +79,19 @@ function DiagnosticoContent() {
 
   if (authLoading || loading) {
     return (
-      <PageContainer>
-        <Navigation />
-        <Header title="Diagnóstico Inicial" description="Carregando questionário..." />
-        <Container className="py-20 flex flex-col items-center justify-center">
-          <div className="text-center animate-fade-in">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-primary shadow-glow mb-5 animate-float">
-              <span className="text-3xl">🧠</span>
-            </div>
-            <p className="font-bold text-[hsl(var(--foreground))] text-lg">Carregando perguntas...</p>
-            <div className="mt-4 flex justify-center gap-1.5">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="w-2 h-2 rounded-full bg-gradient-primary animate-bounce-gentle" style={{ animationDelay: `${i * 150}ms` }} />
-              ))}
-            </div>
+      <Container className="py-20 flex flex-col items-center justify-center">
+        <div className="text-center animate-fade-in">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-primary shadow-glow mb-5 animate-float">
+            <span className="text-3xl">🧠</span>
           </div>
-        </Container>
-      </PageContainer>
+          <p className="font-bold text-[hsl(var(--foreground))] text-lg">Carregando perguntas...</p>
+          <div className="mt-4 flex justify-center gap-1.5">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="w-2 h-2 rounded-full bg-gradient-primary animate-bounce-gentle" style={{ animationDelay: `${i * 150}ms` }} />
+            ))}
+          </div>
+        </div>
+      </Container>
     );
   }
 
@@ -105,19 +101,15 @@ function DiagnosticoContent() {
 
   if (error || questions.length === 0) {
     return (
-      <PageContainer>
-        <Navigation />
-        <Header title="Diagnóstico Inicial" description="Avaliação de conhecimento" />
-        <Container className="py-12">
-          <div className="flex items-start gap-4 p-6 rounded-2xl bg-[hsl(var(--destructive-soft))] border border-[hsl(var(--destructive)_/0.3)]">
-            <span className="text-3xl shrink-0">❌</span>
-            <div>
-              <p className="font-bold text-[hsl(var(--destructive))]">Erro ao carregar diagnóstico</p>
-              <p className="text-sm text-[hsl(var(--destructive))] mt-1">{error || 'Nenhuma pergunta disponível'}</p>
-            </div>
+      <Container className="py-12">
+        <div className="flex items-start gap-4 p-6 rounded-2xl bg-[hsl(var(--destructive-soft))] border border-[hsl(var(--destructive)_/0.3)]">
+          <span className="text-3xl shrink-0">❌</span>
+          <div>
+            <p className="font-bold text-[hsl(var(--destructive))]">Erro ao carregar diagnóstico</p>
+            <p className="text-sm text-[hsl(var(--destructive))] mt-1">{error || 'Nenhuma pergunta disponível'}</p>
           </div>
-        </Container>
-      </PageContainer>
+        </div>
+      </Container>
     );
   }
 
@@ -170,12 +162,18 @@ function DiagnosticoContent() {
         const userAnswer = answers[question.id];
         const isCorrect = userAnswer === question.resposta_correta;
 
-        await saveAnswer(
+        const { error: saveError } = await saveAnswer(
           user.id,
           question.id,
           userAnswer as 'a' | 'b' | 'c' | 'd',
           isCorrect
         );
+
+        if (saveError) {
+          setError(`Erro ao salvar respostas: ${saveError.message}`);
+          setSubmitting(false);
+          return;
+        }
       }
 
       // Calcular nível por matéria
@@ -193,6 +191,17 @@ function DiagnosticoContent() {
 
         if (planError) {
           setError('Erro ao gerar plano de estudos');
+          setSubmitting(false);
+          return;
+        }
+
+        const { error: statusError } = await atualizarStatusDiagnostico(
+          user.id,
+          'completed'
+        );
+
+        if (statusError) {
+          setError('Erro ao atualizar status do diagnostico');
           setSubmitting(false);
           return;
         }
@@ -229,136 +238,124 @@ function DiagnosticoContent() {
   };
 
   return (
-    <PageContainer>
-      <Navigation />
-      <Header
-        title="Diagnóstico Inicial"
-        description="Responda este questionário para conhecer seu nível de conhecimento"
-      />
+    <Container className="py-8">
+      {/* Barra de progresso */}
+      <div className="mb-8 animate-fade-up">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-semibold text-[hsl(var(--muted-foreground))]">
+            Questão {currentQuestionIndex + 1} de {questions.length}
+          </span>
+          <span className="text-sm font-bold text-[hsl(var(--primary))]">{progress}%</span>
+        </div>
+        <div className="progress-bar">
+          <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
+        </div>
+      </div>
 
-      <Container className="py-8">
-        {/* Barra de progresso */}
-        <div className="mb-8 animate-fade-up">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold text-[hsl(var(--muted-foreground))]">
-              Questão {currentQuestionIndex + 1} de {questions.length}
-            </span>
-            <span className="text-sm font-bold text-[hsl(var(--primary))]">{progress}%</span>
-          </div>
-          <div className="progress-bar">
-            <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
-          </div>
+      {/* Card da questão */}
+      <div className="bg-white rounded-2xl border border-[hsl(var(--border))] shadow-card p-7 mb-6 animate-fade-up delay-75">
+        {/* Cabeçalho da questão */}
+        <div className="flex items-center justify-between mb-5">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-soft text-[hsl(var(--primary))] text-xs font-bold rounded-full uppercase tracking-wide">
+            📖 {currentQuestion.materia}
+          </span>
+          <span className="text-xs text-[hsl(var(--muted-foreground))] font-medium px-2.5 py-1 rounded-full bg-[hsl(var(--muted))]">
+            Nível {currentQuestion.nivel}
+          </span>
         </div>
 
-        {/* Card da questão */}
-        <div className="bg-white rounded-2xl border border-[hsl(var(--border))] shadow-card p-7 mb-6 animate-fade-up delay-75">
-          {/* Cabeçalho da questão */}
-          <div className="flex items-center justify-between mb-5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-soft text-[hsl(var(--primary))] text-xs font-bold rounded-full uppercase tracking-wide">
-              📖 {currentQuestion.materia}
-            </span>
-            <span className="text-xs text-[hsl(var(--muted-foreground))] font-medium px-2.5 py-1 rounded-full bg-[hsl(var(--muted))]">
-              Nível {currentQuestion.nivel}
-            </span>
-          </div>
+        <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-6 leading-relaxed">
+          {currentQuestion.pergunta}
+        </h3>
 
-          <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mb-6 leading-relaxed">
-            {currentQuestion.pergunta}
-          </h3>
+        {/* Alternativas */}
+        <div className="space-y-3">
+          {(['a', 'b', 'c', 'd'] as const).map((option) => {
+            const optionText = currentQuestion[`alternativa_${option}`];
+            const isSelected = answers[currentQuestion.id] === option;
 
-          {/* Alternativas */}
-          <div className="space-y-3">
-            {(['a', 'b', 'c', 'd'] as const).map((option) => {
-              const optionText = currentQuestion[`alternativa_${option}`];
-              const isSelected = answers[currentQuestion.id] === option;
+            return (
+              <button
+                key={option}
+                onClick={() => handleSelectAnswer(option)}
+                className={[
+                  'w-full text-left p-4 rounded-2xl border-2 transition-all duration-200',
+                  'flex items-center gap-4',
+                  'hover:shadow-sm',
+                  isSelected
+                    ? 'border-[hsl(var(--primary))] bg-primary-soft shadow-[0_2px_12px_-2px_hsl(258_90%_60%_/0.2)]'
+                    : 'border-[hsl(var(--border))] hover:border-[hsl(var(--primary)_/0.4)] bg-[hsl(var(--muted)_/0.3)]',
+                ].join(' ')}
+              >
+                {/* Radio dot */}
+                <div className={[
+                  'w-6 h-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-all duration-200',
+                  isSelected ? 'border-[hsl(var(--primary))] bg-gradient-primary' : 'border-[hsl(var(--border))]',
+                ].join(' ')}>
+                  {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
+                </div>
 
-              return (
-                <button
-                  key={option}
-                  onClick={() => handleSelectAnswer(option)}
-                  className={[
-                    'w-full text-left p-4 rounded-2xl border-2 transition-all duration-200',
-                    'flex items-center gap-4',
-                    'hover:shadow-sm',
-                    isSelected
-                      ? 'border-[hsl(var(--primary))] bg-primary-soft shadow-[0_2px_12px_-2px_hsl(258_90%_60%_/0.2)]'
-                      : 'border-[hsl(var(--border))] hover:border-[hsl(var(--primary)_/0.4)] bg-[hsl(var(--muted)_/0.3)]',
-                  ].join(' ')}
-                >
-                  {/* Radio dot */}
-                  <div className={[
-                    'w-6 h-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-all duration-200',
-                    isSelected ? 'border-[hsl(var(--primary))] bg-gradient-primary' : 'border-[hsl(var(--border))]',
-                  ].join(' ')}>
-                    {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
-                  </div>
-
-                  {/* Texto */}
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className={['text-sm font-bold', isSelected ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'].join(' ')}>
-                      {option.toUpperCase()}
-                    </span>
-                    <span className={['text-sm', isSelected ? 'text-[hsl(var(--foreground))] font-medium' : 'text-[hsl(var(--foreground))]'].join(' ')}>
-                      {optionText}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Erro */}
-          {error && (
-            <div className="mt-5 flex items-center gap-2 p-4 rounded-2xl bg-[hsl(var(--destructive-soft))] border border-[hsl(var(--destructive)_/0.2)]">
-              <span>⚠️</span>
-              <p className="text-sm text-[hsl(var(--destructive))] font-medium">{error}</p>
-            </div>
-          )}
-
-          {/* Navegação */}
-          <div className="flex items-center justify-between mt-7 gap-3">
-            <Button
-              onClick={handlePrevious}
-              disabled={currentQuestionIndex === 0 || submitting || isSkipping}
-              variant="ghost"
-              size="md"
-            >
-              ← Anterior
-            </Button>
-
-            <Button
-              onClick={handleSkip}
-              disabled={submitting || isSkipping}
-              variant="ghost"
-              size="sm"
-              className="text-[hsl(var(--muted-foreground))]"
-            >
-              {isSkipping ? 'Pulando...' : '⏸️ Deixar para depois'}
-            </Button>
-
-            <Button
-              onClick={handleNext}
-              disabled={submitting || isSkipping || !isAnswered}
-              variant="primary"
-              size="md"
-            >
-              {isLastQuestion
-                ? submitting
-                  ? <span className="flex items-center gap-2"><span className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />Gerando plano...</span>
-                  : 'Finalizar & Gerar Plano 🚀'
-                : 'Próxima →'}
-            </Button>
-          </div>
+                {/* Texto */}
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className={['text-sm font-bold', isSelected ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'].join(' ')}>
+                    {option.toUpperCase()}
+                  </span>
+                  <span className={['text-sm', isSelected ? 'text-[hsl(var(--foreground))] font-medium' : 'text-[hsl(var(--foreground))]'].join(' ')}>
+                    {optionText}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
-      </Container>
-    </PageContainer>
+
+        {/* Erro */}
+        {error && (
+          <div className="mt-5 flex items-center gap-2 p-4 rounded-2xl bg-[hsl(var(--destructive-soft))] border border-[hsl(var(--destructive)_/0.2)]">
+            <span>⚠️</span>
+            <p className="text-sm text-[hsl(var(--destructive))] font-medium">{error}</p>
+          </div>
+        )}
+
+        {/* Navegação */}
+        <div className="flex items-center justify-between mt-7 gap-3">
+          <Button
+            onClick={handlePrevious}
+            disabled={currentQuestionIndex === 0 || submitting || isSkipping}
+            variant="ghost"
+            size="md"
+          >
+            ← Anterior
+          </Button>
+
+          <Button
+            onClick={handleSkip}
+            disabled={submitting || isSkipping}
+            variant="ghost"
+            size="sm"
+            className="text-[hsl(var(--muted-foreground))]"
+          >
+            {isSkipping ? 'Pulando...' : '⏸️ Deixar para depois'}
+          </Button>
+
+          <Button
+            onClick={handleNext}
+            disabled={submitting || isSkipping || !isAnswered}
+            variant="primary"
+            size="md"
+          >
+            {isLastQuestion
+              ? submitting
+                ? <span className="flex items-center gap-2"><span className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />Gerando plano...</span>
+                : 'Finalizar & Gerar Plano 🚀'
+              : 'Próxima →'}
+          </Button>
+        </div>
+      </div>
+    </Container>
   );
 }
 
 export default function DiagnosticoPage() {
-  return (
-    <ProtectedRoute>
-      <DiagnosticoContent />
-    </ProtectedRoute>
-  );
+  return <DiagnosticoContent />;
 }

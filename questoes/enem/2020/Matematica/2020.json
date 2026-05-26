@@ -1,0 +1,417 @@
+{
+  "metadados": {
+    "area": "Matemática e suas Tecnologias",
+    "ano": 2020,
+    "total_questoes": 14,
+    "versao": "1.0",
+    "observacao": "Questões marcadas com 'imagem_pendente: true' precisam da imagem salva em imagens/MAT2020_XX.png"
+  },
+  "questoes": [
+    {
+      "id": "MAT2020_01",
+      "ano": 2020,
+      "numero_prova": 1,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Grandezas, Medidas e Escalas",
+      "habilidade_principal": "MAT_H11",
+      "habilidades_secundarias": ["MAT_H10", "MAT_H16"],
+      "dificuldade": "dificil",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": true,
+      "imagem": "imagens/MAT2020_01.png",
+      "imagem_pendente": true,
+      "enunciado": "A fabricação da Bandeira Nacional deve obedecer ao descrito na Lei n. 5.700, de 1º de setembro de 1971, que trata dos Símbolos Nacionais. No artigo que se refere às dimensões da Bandeira, observa-se:\n\n\"Para cálculos das dimensões, será tomada por base a largura, dividindo-a em 14 (quatorze) partes iguais, sendo que cada uma das partes será considerada uma medida ou módulo (M). Os demais requisitos dimensionais seguem o critério abaixo:\nI. Comprimento será de vinte módulos (20 M);\nII. A distância dos vértices do losango amarelo ao quadro externo será de um módulo e sete décimos (1,7 M);\nIII. O raio do círculo azul no meio do losango amarelo será de três módulos e meio (3,5 M).\"\n\nA figura indica as cores da bandeira do Brasil e localiza o quadro externo a que se refere a Lei n. 5.700.\n\nUm torcedor, preparando-se para a Copa do Mundo e dispondo de cortes de tecidos verde (180 cm × 150 cm) e amarelo (o quanto baste), deseja confeccionar a maior Bandeira Nacional possível a partir das medidas do tecido verde. Qual a medida, em centímetro, do lado do menor quadrado de tecido azul que deverá ser comprado para confecção do círculo da bandeira desejada?",
+      "alternativas": [
+        { "letra": "A", "texto": "27" },
+        { "letra": "B", "texto": "32" },
+        { "letra": "C", "texto": "53" },
+        { "letra": "D", "texto": "63" },
+        { "letra": "E", "texto": "90" }
+      ],
+      "gabarito": "D",
+      "conceitos_avaliados": ["módulo", "proporcionalidade", "escala", "raio e diâmetro"],
+      "tipos_de_erro_comuns": [
+        "Confundir largura (14M) com comprimento (20M) como base de cálculo",
+        "Esquecer que o lado do quadrado deve conter o diâmetro (2× raio)",
+        "Não identificar corretamente qual dimensão limita o tamanho da bandeira"
+      ]
+    },
+    {
+      "id": "MAT2020_02",
+      "ano": 2020,
+      "numero_prova": 2,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Estatística e Probabilidade",
+      "habilidade_principal": "MAT_H24",
+      "habilidades_secundarias": ["MAT_H03", "MAT_H04"],
+      "dificuldade": "facil",
+      "eixo_cognitivo": "CF",
+      "tem_imagem": true,
+      "imagem": "imagens/MAT2020_02.png",
+      "imagem_pendente": true,
+      "enunciado": "Uma empresa de ônibus utiliza um sistema de vendas de passagens que fornece a imagem de todos os assentos do ônibus, diferenciando os assentos já vendidos, por uma cor mais escura, dos assentos ainda disponíveis. A empresa monitora, permanentemente, o número de assentos já vendidos e compara-o com o número total de assentos do ônibus para avaliar a necessidade de alocação de veículos extras.\n\nNa imagem tem-se a informação dos assentos já vendidos e dos ainda disponíveis em um determinado instante. A razão entre o número de assentos já vendidos e o total de assentos desse ônibus, no instante considerado na imagem, é",
+      "alternativas": [
+        { "letra": "A", "texto": "16/42" },
+        { "letra": "B", "texto": "16/26" },
+        { "letra": "C", "texto": "26/42" },
+        { "letra": "D", "texto": "42/26" },
+        { "letra": "E", "texto": "42/16" }
+      ],
+      "gabarito": "C",
+      "conceitos_avaliados": ["razão", "leitura de imagem", "fração"],
+      "tipos_de_erro_comuns": [
+        "Inverter numerador e denominador da razão",
+        "Confundir 'assentos vendidos' com 'assentos disponíveis'",
+        "Não somar corretamente o total de assentos"
+      ]
+    },
+    {
+      "id": "MAT2020_03",
+      "ano": 2020,
+      "numero_prova": 3,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Grandezas, Medidas e Escalas",
+      "habilidade_principal": "MAT_H11",
+      "habilidades_secundarias": ["MAT_H08", "MAT_H12"],
+      "dificuldade": "media",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": false,
+      "imagem": null,
+      "imagem_pendente": false,
+      "enunciado": "A caixa-d'água de um edifício terá a forma de um paralelepípedo retângulo reto com volume igual a 28 080 litros. Em uma maquete que representa o edifício, a caixa-d'água tem dimensões 2 cm × 3,51 cm × 4 cm.\n\nDado: 1 dm³ = 1 L.\n\nA escala usada pelo arquiteto foi",
+      "alternativas": [
+        { "letra": "A", "texto": "1 : 10" },
+        { "letra": "B", "texto": "1 : 100" },
+        { "letra": "C", "texto": "1 : 1 000" },
+        { "letra": "D", "texto": "1 : 10 000" },
+        { "letra": "E", "texto": "1 : 100 000" }
+      ],
+      "gabarito": "B",
+      "conceitos_avaliados": ["escala", "volume de paralelepípedo", "conversão de unidades", "dm³ e litro"],
+      "tipos_de_erro_comuns": [
+        "Confundir escala linear com escala de volume (k³ vs k)",
+        "Erro na conversão de litros para cm³",
+        "Calcular escala de volume em vez de escala linear"
+      ]
+    },
+    {
+      "id": "MAT2020_04",
+      "ano": 2020,
+      "numero_prova": 4,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Estatística e Probabilidade",
+      "habilidade_principal": "MAT_H25",
+      "habilidades_secundarias": ["MAT_H24", "MAT_H17"],
+      "dificuldade": "media",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": true,
+      "imagem": "imagens/MAT2020_04.png",
+      "imagem_pendente": true,
+      "enunciado": "Os gráficos representam a produção de peças em uma indústria e as horas trabalhadas dos funcionários no período de cinco dias. Em cada dia, o gerente de produção aplica uma metodologia diferente de trabalho. Seu objetivo é avaliar a metodologia mais eficiente para utilizá-la como modelo nos próximos períodos. Sabe-se que, neste caso, quanto maior for a razão entre o número de peças produzidas e o número de horas trabalhadas, maior será a eficiência da metodologia.\n\nEm qual dia foi aplicada a metodologia mais eficiente?",
+      "alternativas": [
+        { "letra": "A", "texto": "1" },
+        { "letra": "B", "texto": "2" },
+        { "letra": "C", "texto": "3" },
+        { "letra": "D", "texto": "4" },
+        { "letra": "E", "texto": "5" }
+      ],
+      "gabarito": "B",
+      "conceitos_avaliados": ["leitura de gráfico", "razão", "eficiência", "comparação de valores"],
+      "tipos_de_erro_comuns": [
+        "Considerar apenas a produção sem dividir pelas horas",
+        "Ler incorretamente os valores do gráfico",
+        "Confundir maior produção com maior eficiência"
+      ]
+    },
+    {
+      "id": "MAT2020_05",
+      "ano": 2020,
+      "numero_prova": 5,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Funções, Álgebra e Proporcionalidade",
+      "habilidade_principal": "MAT_H19",
+      "habilidades_secundarias": ["MAT_H01", "MAT_H02"],
+      "dificuldade": "media",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": false,
+      "imagem": null,
+      "imagem_pendente": false,
+      "enunciado": "Um hotel de 3 andares está sendo construído. Cada andar terá 100 quartos. Os quartos serão numerados de 100 a 399 e cada um terá seu número afixado à porta. Cada número será composto por peças individuais, cada uma simbolizando um único algarismo.\n\nQual a quantidade mínima de peças, simbolizando o algarismo 2, necessárias para identificar o número de todos os quartos?",
+      "alternativas": [
+        { "letra": "A", "texto": "160" },
+        { "letra": "B", "texto": "157" },
+        { "letra": "C", "texto": "130" },
+        { "letra": "D", "texto": "120" },
+        { "letra": "E", "texto": "60" }
+      ],
+      "gabarito": "A",
+      "conceitos_avaliados": ["contagem", "algarismos", "análise de casos", "organização sistemática"],
+      "tipos_de_erro_comuns": [
+        "Não considerar o algarismo 2 nas centenas (200-299: 100 ocorrências na centena + dezenas e unidades)",
+        "Contar apenas dezenas ou apenas unidades",
+        "Esquecer de somar as ocorrências em diferentes posições"
+      ]
+    },
+    {
+      "id": "MAT2020_06",
+      "ano": 2020,
+      "numero_prova": 6,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Estatística e Probabilidade",
+      "habilidade_principal": "MAT_H28",
+      "habilidades_secundarias": ["MAT_H27", "MAT_H03"],
+      "dificuldade": "dificil",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": true,
+      "imagem": "imagens/MAT2020_06.png",
+      "imagem_pendente": true,
+      "enunciado": "O Estatuto do Idoso, no Brasil, prevê certos direitos às pessoas com idade avançada, concedendo a estas, entre outros benefícios, a restituição de imposto de renda antes dos demais contribuintes. A tabela informa os nomes e as idades de 12 idosos que aguardam suas restituições de imposto de renda. Considere que, entre os idosos, a restituição seja concedida em ordem decrescente de idade e que, em subgrupos de pessoas com a mesma idade, a ordem seja decidida por sorteio.\n\nNessas condições, a probabilidade de João ser a sétima pessoa do grupo a receber sua restituição é igual a",
+      "alternativas": [
+        { "letra": "A", "texto": "1/12" },
+        { "letra": "B", "texto": "7/12" },
+        { "letra": "C", "texto": "1/8" },
+        { "letra": "D", "texto": "5/6" },
+        { "letra": "E", "texto": "1/4" }
+      ],
+      "gabarito": "E",
+      "conceitos_avaliados": ["probabilidade", "espaço amostral", "ordenação", "subgrupos igualitários"],
+      "tipos_de_erro_comuns": [
+        "Não identificar quantas pessoas estão no mesmo grupo de idade que João",
+        "Confundir probabilidade de ser o 7º com probabilidade de estar entre os 7 primeiros",
+        "Calcular 1/12 sem considerar o agrupamento por idade"
+      ]
+    },
+    {
+      "id": "MAT2020_07",
+      "ano": 2020,
+      "numero_prova": 7,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Números e Operações",
+      "habilidade_principal": "MAT_H03",
+      "habilidades_secundarias": ["MAT_H16", "MAT_H10"],
+      "dificuldade": "media",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": false,
+      "imagem": null,
+      "imagem_pendente": false,
+      "enunciado": "Uma torneira está gotejando água em um balde com capacidade de 18 litros. No instante atual, o balde se encontra com ocupação de 50% de sua capacidade. A cada segundo caem 5 gotas de água da torneira, e uma gota é formada, em média, por 5 × 10⁻² mL de água.\n\nQuanto tempo, em hora, será necessário para encher completamente o balde, partindo do instante atual?",
+      "alternativas": [
+        { "letra": "A", "texto": "2 × 10¹" },
+        { "letra": "B", "texto": "1 × 10¹" },
+        { "letra": "C", "texto": "2 × 10⁻²" },
+        { "letra": "D", "texto": "1 × 10⁻²" },
+        { "letra": "E", "texto": "1 × 10⁻³" }
+      ],
+      "gabarito": "B",
+      "conceitos_avaliados": ["notação científica", "taxa de variação", "conversão de unidades", "porcentagem"],
+      "tipos_de_erro_comuns": [
+        "Não converter mL para L corretamente",
+        "Esquecer de converter segundos para horas",
+        "Calcular para encher o balde inteiro sem descontar os 50% já preenchidos"
+      ]
+    },
+    {
+      "id": "MAT2020_08",
+      "ano": 2020,
+      "numero_prova": 8,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Grandezas, Medidas e Escalas",
+      "habilidade_principal": "MAT_H12",
+      "habilidades_secundarias": ["MAT_H06", "MAT_H11"],
+      "dificuldade": "dificil",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": true,
+      "imagem": "imagens/MAT2020_08.png",
+      "imagem_pendente": true,
+      "enunciado": "Um clube deseja produzir miniaturas em escala do troféu que ganhou no último campeonato. O troféu está representado na Figura 1 e é composto por uma base em formato de paralelepípedo reto-retângulo de madeira, sobre a qual estão fixadas três hastes verticais que sustentam uma esfera de 30 cm de diâmetro, que fica centralizada sobre a base de madeira. O troféu tem 100 cm de altura, incluída sua base.\n\nA miniatura desse troféu deverá ser instalada no interior de uma caixa de vidro, em formato de paralelepípedo reto-retângulo, cujas dimensões internas de sua base estão indicadas na Figura 2, de modo que a base do troféu seja colada na base da caixa e distante das paredes laterais da caixa de vidro em pelo menos 1 cm. Deve ainda haver uma distância de exatos 2 cm entre o topo da esfera e a tampa dessa caixa de vidro. Nessas condições deseja-se fazer a maior miniatura possível.\n\nA medida da altura, em centímetro, dessa caixa de vidro deverá ser igual a",
+      "alternativas": [
+        { "letra": "A", "texto": "12" },
+        { "letra": "B", "texto": "14" },
+        { "letra": "C", "texto": "16" },
+        { "letra": "D", "texto": "18" },
+        { "letra": "E", "texto": "20" }
+      ],
+      "gabarito": "A",
+      "conceitos_avaliados": ["escala", "proporção", "geometria espacial", "restrições de medida"],
+      "tipos_de_erro_comuns": [
+        "Não considerar a restrição dos 1 cm das paredes para calcular a escala",
+        "Calcular a escala pela altura sem verificar se a base cabe na caixa",
+        "Esquecer de somar os 2 cm entre a esfera e a tampa na altura final"
+      ]
+    },
+    {
+      "id": "MAT2020_09",
+      "ano": 2020,
+      "numero_prova": 9,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Funções, Álgebra e Proporcionalidade",
+      "habilidade_principal": "MAT_H15",
+      "habilidades_secundarias": ["MAT_H19", "MAT_H20"],
+      "dificuldade": "media",
+      "eixo_cognitivo": "CF",
+      "tem_imagem": false,
+      "imagem": null,
+      "imagem_pendente": false,
+      "enunciado": "Muitos modelos atuais de veículos possuem computador de bordo. Os computadores informam em uma tela diversas variações de grandezas associadas ao desempenho do carro, dentre elas o consumo médio de combustível. Um veículo, de um determinado modelo, pode vir munido de um dos dois tipos de computadores de bordo:\n• Tipo A: informa a quantidade X de litro de combustível gasto para percorrer 100 quilômetros;\n• Tipo B: informa a quantidade de quilômetro que o veículo é capaz de percorrer com um litro de combustível.\n\nUm veículo utiliza o computador do Tipo A, e ao final de uma viagem o condutor viu apresentada na tela a informação \"X/100\". Caso o seu veículo utilizasse o computador do Tipo B, o valor informado na tela seria obtido pela operação",
+      "alternativas": [
+        { "letra": "A", "texto": "X · 100" },
+        { "letra": "B", "texto": "X / 100" },
+        { "letra": "C", "texto": "100 / X" },
+        { "letra": "D", "texto": "1 / X" },
+        { "letra": "E", "texto": "1 · X" }
+      ],
+      "gabarito": "C",
+      "conceitos_avaliados": ["grandezas inversamente proporcionais", "interpretação de variáveis", "relação entre grandezas"],
+      "tipos_de_erro_comuns": [
+        "Multiplicar em vez de dividir ao inverter a relação",
+        "Não perceber que as grandezas são inversamente proporcionais",
+        "Confundir X litros/100km com km/litro"
+      ]
+    },
+    {
+      "id": "MAT2020_10",
+      "ano": 2020,
+      "numero_prova": 10,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Geometria e Formas",
+      "habilidade_principal": "MAT_H07",
+      "habilidades_secundarias": ["MAT_H06", "MAT_H09"],
+      "dificuldade": "facil",
+      "eixo_cognitivo": "CF",
+      "tem_imagem": false,
+      "imagem": null,
+      "imagem_pendente": false,
+      "enunciado": "Uma das Sete Maravilhas do Mundo Moderno é o Templo de Kukulkán, localizado na cidade de Chichén Itzá, no México. Geometricamente, esse templo pode ser representado por um tronco reto de pirâmide de base quadrada.\n\nAs quantidades de cada tipo de figura plana que formam esse tronco de pirâmide são",
+      "alternativas": [
+        { "letra": "A", "texto": "2 quadrados e 4 retângulos." },
+        { "letra": "B", "texto": "1 retângulo e 4 triângulos isósceles." },
+        { "letra": "C", "texto": "2 quadrados e 4 trapézios isósceles." },
+        { "letra": "D", "texto": "1 quadrado, 3 retângulos e 2 trapézios retângulos." },
+        { "letra": "E", "texto": "2 retângulos, 2 quadrados e 2 trapézios retângulos." }
+      ],
+      "gabarito": "C",
+      "conceitos_avaliados": ["tronco de pirâmide", "figuras planas", "geometria espacial", "faces de sólidos"],
+      "tipos_de_erro_comuns": [
+        "Confundir tronco de pirâmide com pirâmide completa (que teria triângulos)",
+        "Não identificar que as faces laterais de um tronco de pirâmide são trapézios",
+        "Confundir base quadrada com base retangular"
+      ]
+    },
+    {
+      "id": "MAT2020_11",
+      "ano": 2020,
+      "numero_prova": 11,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Grandezas, Medidas e Escalas",
+      "habilidade_principal": "MAT_H16",
+      "habilidades_secundarias": ["MAT_H10", "MAT_H17"],
+      "dificuldade": "media",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": true,
+      "imagem": "imagens/MAT2020_11.png",
+      "imagem_pendente": true,
+      "enunciado": "Para chegar à universidade, um estudante utiliza um metrô e, depois, tem duas opções:\n• seguir num ônibus, percorrendo 2,0 km;\n• alugar uma bicicleta, ao lado da estação do metrô, seguindo 3,0 km pela ciclovia.\n\nO quadro fornece as velocidades médias do ônibus e da bicicleta, em km/h, no trajeto metrô−universidade.\n\nA fim de poupar tempo no deslocamento para a universidade, em quais dias o aluno deve seguir pela ciclovia?",
+      "alternativas": [
+        { "letra": "A", "texto": "Às segundas, quintas e sextas-feiras." },
+        { "letra": "B", "texto": "Às terças e quintas-feiras e aos sábados." },
+        { "letra": "C", "texto": "Às segundas, quartas e sextas-feiras." },
+        { "letra": "D", "texto": "Às terças, quartas e sextas-feiras." },
+        { "letra": "E", "texto": "Às terças e quartas-feiras e aos sábados." }
+      ],
+      "gabarito": "D",
+      "conceitos_avaliados": ["velocidade, espaço e tempo", "comparação de razões", "leitura de tabela"],
+      "tipos_de_erro_comuns": [
+        "Comparar diretamente as velocidades sem considerar as distâncias diferentes",
+        "Inverter a relação tempo = distância/velocidade",
+        "Ler incorretamente os valores da tabela"
+      ]
+    },
+    {
+      "id": "MAT2020_12",
+      "ano": 2020,
+      "numero_prova": 12,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Funções, Álgebra e Proporcionalidade",
+      "habilidade_principal": "MAT_H19",
+      "habilidades_secundarias": ["MAT_H02", "MAT_H21"],
+      "dificuldade": "dificil",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": true,
+      "imagem": "imagens/MAT2020_12.png",
+      "imagem_pendente": true,
+      "enunciado": "O artista gráfico holandês Maurits Cornelius Escher criou belíssimas obras nas quais as imagens se repetiam, com diferentes tamanhos, induzindo ao raciocínio de repetição infinita das imagens. Inspirado por ele, um artista fez um rascunho de uma obra na qual propunha a ideia de construção de uma sequência de infinitos quadrados, cada vez menores, uns sob os outros, conforme indicado na figura.\n\nO quadrado PRST, com lado de medida 1, é o ponto de partida. O segundo quadrado é construído sob ele tomando-se o ponto médio da base do quadrado anterior e criando-se um novo quadrado, cujo lado corresponde à metade dessa base. Essa sequência de construção se repete recursivamente.\n\nQual é a medida do lado do centésimo quadrado construído de acordo com esse padrão?",
+      "alternativas": [
+        { "letra": "A", "texto": "(1/2)^100" },
+        { "letra": "B", "texto": "(1/2)^99" },
+        { "letra": "C", "texto": "(1/2)^97" },
+        { "letra": "D", "texto": "(1/2)^98" },
+        { "letra": "E", "texto": "(1/2)^99" }
+      ],
+      "gabarito": "D",
+      "conceitos_avaliados": ["progressão geométrica", "padrão sequencial", "potenciação", "razão geométrica"],
+      "tipos_de_erro_comuns": [
+        "Confundir o índice: o 1º quadrado tem lado 1 = (1/2)^0, então o n-ésimo tem (1/2)^(n-1)",
+        "Usar (1/2)^100 em vez de (1/2)^99 por contar o quadrado inicial errado",
+        "Não identificar a razão da progressão geométrica"
+      ]
+    },
+    {
+      "id": "MAT2020_13",
+      "ano": 2020,
+      "numero_prova": 13,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Estatística e Probabilidade",
+      "habilidade_principal": "MAT_H29",
+      "habilidades_secundarias": ["MAT_H28", "MAT_H03"],
+      "dificuldade": "dificil",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": false,
+      "imagem": null,
+      "imagem_pendente": false,
+      "enunciado": "Amigo secreto é uma brincadeira tradicional nas festas de fim de ano. Um grupo de amigos se reúne e cada um deles sorteia o nome da pessoa que irá presentear. No dia da troca de presentes, uma primeira pessoa presenteia seu amigo secreto. Em seguida, o presenteado revela seu amigo secreto e o presenteia. A brincadeira continua até que todos sejam presenteados, mesmo no caso em que o ciclo se fecha. Dez funcionários de uma empresa, entre eles um casal, participarão de um amigo secreto. A primeira pessoa a revelar será definida por sorteio.\n\nQual é a probabilidade de que a primeira pessoa a revelar o seu amigo secreto e a última presenteada sejam as duas pessoas do casal?",
+      "alternativas": [
+        { "letra": "A", "texto": "1/5" },
+        { "letra": "B", "texto": "1/45" },
+        { "letra": "C", "texto": "1/50" },
+        { "letra": "D", "texto": "1/90" },
+        { "letra": "E", "texto": "1/100" }
+      ],
+      "gabarito": "C",
+      "conceitos_avaliados": ["probabilidade", "análise combinatória", "espaço amostral", "eventos compostos"],
+      "tipos_de_erro_comuns": [
+        "Não considerar as duas possibilidades do casal (ele primeiro ou ela primeiro)",
+        "Calcular apenas 1/10 × 1/9 sem considerar a estrutura da brincadeira",
+        "Confundir o evento 'última presenteada' com 'último a revelar'"
+      ]
+    },
+    {
+      "id": "MAT2020_14",
+      "ano": 2020,
+      "numero_prova": 14,
+      "area": "Matemática e suas Tecnologias",
+      "subtrilha": "Números e Operações",
+      "habilidade_principal": "MAT_H03",
+      "habilidades_secundarias": ["MAT_H16", "MAT_H05"],
+      "dificuldade": "media",
+      "eixo_cognitivo": "SP",
+      "tem_imagem": false,
+      "imagem": null,
+      "imagem_pendente": false,
+      "enunciado": "Um motociclista planeja realizar uma viagem cujo destino fica a 500 km de sua casa. Sua moto consome 5 litros de gasolina para cada 100 km rodados, e o tanque da moto tem capacidade para 22 litros. Pelo mapa, observou que no trajeto da viagem o último posto disponível para reabastecimento, chamado Estrela, fica a 80 km do seu destino. Ele pretende partir com o tanque da moto cheio e planeja fazer somente duas paradas para reabastecimento, uma na ida e outra na volta, ambas no posto Estrela. No reabastecimento para a viagem de ida, deve considerar também combustível suficiente para se deslocar por 200 km no seu destino.\n\nA quantidade mínima de combustível, em litro, que esse motociclista deve reabastecer no posto Estrela na viagem de ida, que seja suficiente para fazer o segundo reabastecimento, é",
+      "alternativas": [
+        { "letra": "A", "texto": "13" },
+        { "letra": "B", "texto": "14" },
+        { "letra": "C", "texto": "17" },
+        { "letra": "D", "texto": "18" },
+        { "letra": "E", "texto": "21" }
+      ],
+      "gabarito": "A",
+      "conceitos_avaliados": ["consumo e distância", "regra de três", "planejamento com restrições", "otimização"],
+      "tipos_de_erro_comuns": [
+        "Calcular o consumo total da viagem sem descontar o combustível que sobra ao chegar em Estrela",
+        "Não considerar que o tanque tem capacidade máxima de 22L",
+        "Somar os 200 km de deslocamento no destino antes de calcular o que sobra no tanque"
+      ]
+    }
+  ]
+}

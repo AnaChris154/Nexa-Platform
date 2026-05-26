@@ -18,15 +18,15 @@ import {
 import { Navigation } from '@/components/Navigation';
 import { Header } from '@/components/Header';
 import { Container } from '@/components/Container';
-import { Button } from '@/components/Button';
-import { Input } from '@/components/Input';
-import { Card } from '@/components/Card';
-import { ProgressBar } from '@/components/ProgressBar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Progress as ProgressBar } from '@/components/ui/progress';
 import { PageContainer } from '@/components/PageContainer';
 import { ProtectedRoute } from '@/app/contexts/ProtectedRoute';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { createStudentGoal, getStudentGoal } from '@/services/studentGoalsService';
-import { Skeleton } from '@/components/Skeleton';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Objetivo = 'faculdade' | 'mercado' | 'escola';
 type FormaIngresso =
@@ -172,30 +172,20 @@ function OnboardingContent() {
 
   if (loading) {
     return (
-      <PageContainer>
-        <Navigation />
-        <div className="sm:pl-56 flex items-center justify-center min-h-[calc(100vh-3.5rem)]">
-          <div className="text-center space-y-4">
-            <Skeleton variant="circular" width={64} height={64} className="mx-auto" />
-            <Skeleton width={150} height={20} className="mx-auto" />
-          </div>
+      <div className="flex items-center justify-center min-h-[calc(100vh-3.5rem)]">
+        <div className="text-center space-y-4">
+          <Skeleton variant="circular" width={64} height={64} className="mx-auto" />
+          <Skeleton width={150} height={20} className="mx-auto" />
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   const progressValue = currentStep === 1 ? 33 : currentStep === 2 ? 66 : 100;
 
   return (
-    <PageContainer>
-      <Navigation />
-      <Header
-        title="Bem-vindo ao NEXA"
-        description="Vamos conhecer seus objetivos e preparar seu plano de estudos personalizado"
-      />
-
-      <Container className="py-8 max-w-2xl">
-        {/* Progress */}
+    <Container className="py-8 max-w-2xl">
+      {/* Progress */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -441,14 +431,9 @@ function OnboardingContent() {
           )}
         </AnimatePresence>
       </Container>
-    </PageContainer>
-  );
-}
+    );
+  }
 
-export default function OnboardingPage() {
-  return (
-    <ProtectedRoute>
-      <OnboardingContent />
-    </ProtectedRoute>
-  );
-}
+  export default function OnboardingPage() {
+    return <OnboardingContent />;
+  }

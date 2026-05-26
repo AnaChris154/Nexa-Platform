@@ -1,0 +1,32 @@
+[
+  {
+    "id": "LEIT_ENUN",
+    "habilidade_id": "MAT_INT",
+    "nome": "Leitura de Enunciado",
+    "descricao": "Identificar o comando principal da questão."
+  },
+  {
+    "id": "IDENT_VAR",
+    "habilidade_id": "MAT_INT",
+    "nome": "Identificação de Variáveis",
+    "descricao": "Extrair os dados numéricos relevantes do texto."
+  },
+  {
+    "id": "PORCENT",
+    "habilidade_id": "MAT_PROP",
+    "nome": "Cálculo de Porcentagem",
+    "descricao": "Aplicar taxas percentuais sobre valores."
+  },
+  {
+    "id": "REGRA_TRES",
+    "habilidade_id": "MAT_PROP",
+    "nome": "Regra de Três",
+    "descricao": "Resolver problemas de grandezas direta ou inversamente proporcionais."
+  },
+  {
+    "id": "EQUAC_1G",
+    "habilidade_id": "MAT_ALG",
+    "nome": "Equações de 1º Grau",
+    "descricao": "Encontrar o valor de uma incógnita em sentenças matemáticas simples."
+  }
+]

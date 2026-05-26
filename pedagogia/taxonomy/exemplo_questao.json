@@ -1,0 +1,23 @@
+[
+  {
+    "id": "ENEM_2023_MAT_135",
+    "ano": 2023,
+    "caderno": "Amarelo",
+    "numero": 135,
+    "enunciado": "Um vendedor de automóveis sabe que para vender um carro de R$ 50.000,00, ele precisa gastar 2% do valor em anúncios. Qual o valor gasto em anúncios?",
+    "alternativas": {
+      "a": "R$ 500,00",
+      "b": "R$ 1.000,00",
+      "c": "R$ 1.500,00",
+      "d": "R$ 2.000,00",
+      "e": "R$ 2.500,00"
+    },
+    "resposta_correta": "b",
+    "habilidade_principal": "MAT_PROP",
+    "habilidades_secundarias": ["MAT_INT", "PORCENT"],
+    "dificuldade": "facil",
+    "tipos_de_erro_comuns": ["erro_posicionamento_virgula", "erro_interpretacao_percentual"],
+    "dependencias_conceituais": ["multiplicacao_decimais"],
+    "conceitos_avaliados": ["porcentagem", "financas_basicas"]
+  }
+]

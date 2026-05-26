@@ -1,84 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import Link from 'next/link';
 import {
-  LayoutGrid,
-  Map,
-  BookOpen,
-  CheckSquare,
-  Settings,
-  RefreshCw,
   Target,
   GraduationCap,
   Briefcase,
   BookMarked,
-  Zap,
   TrendingUp,
   Clock,
   ArrowRight,
+  Sparkles,
 } from 'lucide-react';
-import { Navigation } from '@/components/Navigation';
-import { Container } from '@/components/Container';
-import { CardMenu } from '@/components/CardMenu';
-import { Button } from '@/components/Button';
-import { Card } from '@/components/Card';
-import { Badge } from '@/components/Badge';
-import { Avatar } from '@/components/Avatar';
-import { ProgressBar } from '@/components/ProgressBar';
-import { SkeletonDashboard } from '@/components/Skeleton';
-import { PageContainer } from '@/components/PageContainer';
-import { ProtectedRoute } from '@/app/contexts/ProtectedRoute';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/app/contexts/AuthContext';
 import { getStudentGoal } from '@/services/studentGoalsService';
+import { cn } from '@/lib/utils';
 import type { StudentGoal } from '@/services/studentGoalsService';
-
-const menuItems = [
-  {
-    href: '/aluno/plano',
-    icon: <LayoutGrid className="w-5 h-5" />,
-    title: 'Plano de Estudos',
-    description: 'Seu plano personalizado',
-    variant: 'primary' as const,
-    badge: 'Novo',
-  },
-  {
-    href: '/aluno/trilhas',
-    icon: <Map className="w-5 h-5" />,
-    title: 'Trilhas de Estudo',
-    description: 'Caminhos de aprendizado',
-    variant: 'accent' as const,
-  },
-  {
-    href: '/aluno/disciplinas',
-    icon: <BookOpen className="w-5 h-5" />,
-    title: 'Disciplinas',
-    description: 'Progresso em cada materia',
-    variant: 'success' as const,
-  },
-  {
-    href: '/aluno/atividades',
-    icon: <CheckSquare className="w-5 h-5" />,
-    title: 'Atividades',
-    description: 'Tarefas e exercicios',
-    variant: 'warning' as const,
-  },
-  {
-    href: '/aluno/configuracoes',
-    icon: <Settings className="w-5 h-5" />,
-    title: 'Configuracoes',
-    description: 'Gerencie sua conta',
-    variant: 'primary' as const,
-  },
-  {
-    href: '/aluno/onboarding',
-    icon: <RefreshCw className="w-5 h-5" />,
-    title: 'Refazer Diagnostico',
-    description: 'Atualize suas metas',
-    variant: 'accent' as const,
-  },
-];
 
 const goalIcons = {
   faculdade: GraduationCap,
@@ -92,248 +33,163 @@ const goalLabels = {
   escola: 'Melhorar na Escola',
 };
 
-function AlunoDashboardContent() {
-  const router = useRouter();
+export default function AlunoDashboard() {
   const { user, profile, school } = useAuth();
   const [goal, setGoal] = useState<StudentGoal | null>(null);
-  const [checkingProgress, setCheckingProgress] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const verificarProgresso = async () => {
-      try {
-        if (!user?.id) {
-          setCheckingProgress(false);
-          return;
+    async function fetchGoal() {
+      if (user?.id) {
+        try {
+          const studentGoal = await getStudentGoal(user.id);
+          setGoal(studentGoal);
+        } catch (error) {
+          console.error('Erro ao buscar meta do aluno:', error);
+        } finally {
+          setIsLoading(false);
         }
-
-        const { goal: studentGoal, error: goalError } = await getStudentGoal(user.id);
-
-        if (goalError) {
-          setGoal(null);
-          setCheckingProgress(false);
-          return;
-        }
-
-        setGoal(studentGoal);
-        setCheckingProgress(false);
-      } catch {
-        setGoal(null);
-        setCheckingProgress(false);
       }
-    };
+    }
+    fetchGoal();
+  }, [user]);
 
-    verificarProgresso();
-  }, [user?.id]);
+  const WelcomeMessage = () => (
+    <Card className="mb-8 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold">
+              Olá, {profile?.display_name || 'Aluno'}!
+            </h2>
+            <p className="mt-1 text-primary-foreground/80">
+              Pronto para mais um dia de estudos?
+            </p>
+          </div>
+          <Sparkles className="w-12 h-12 text-primary-foreground/50" />
+        </div>
+      </CardContent>
+    </Card>
+  );
 
-  const userName = profile?.display_name || profile?.email?.split('@')[0] || user?.email?.split('@')[0] || 'Aluno';
-  const GoalIcon = goal ? goalIcons[goal.objetivo] : Target;
+  const GoalCard = () => {
+    if (isLoading) {
+      return <Skeleton className="h-24" />;
+    }
 
-  if (checkingProgress) {
+    if (!goal) {
+      return (
+        <Card>
+          <CardContent className="p-6 flex flex-col items-center text-center">
+            <Target className="w-10 h-10 mb-4 text-muted-foreground" />
+            <h3 className="font-semibold">Defina sua meta!</h3>
+            <p className="text-sm text-muted-foreground mt-1 mb-4">
+              Personalize sua jornada de aprendizado.
+            </p>
+            <Button asChild>
+              <Link href="/aluno/onboarding">Definir Meta</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    const GoalIcon = goal.goal ? goalIcons[goal.goal as keyof typeof goalIcons] : null;
+    const goalLabel = goal.goal ? goalLabels[goal.goal as keyof typeof goalLabels] : 'Meta não definida';
+
+    // Se o ícone não for encontrado, podemos usar um ícone padrão ou não renderizar o card.
+    // Aqui, vamos usar o ícone de Target como fallback.
+    const DisplayIcon = GoalIcon || Target;
+
     return (
-      <PageContainer>
-        <Navigation />
-        <div className="sm:pl-56 pt-6 px-4 sm:px-6 lg:px-8 pb-24 sm:pb-8">
-          <div className="max-w-4xl mx-auto">
-            <SkeletonDashboard />
+      <Card className="hover:border-primary/80 transition-colors">
+        <CardContent className="p-6">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-muted rounded-lg">
+              <DisplayIcon className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Seu objetivo</p>
+              <h3 className="text-lg font-semibold">
+                {goalLabel}
+              </h3>
+            </div>
+            <Button variant="ghost" size="icon" className="ml-auto" asChild>
+              <Link href="/aluno/onboarding">
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const RecentActivityCard = () => (
+    <Card>
+      <CardContent className="p-6">
+        <h3 className="font-semibold mb-4">Atividade Recente</h3>
+        <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
+          <Clock className="w-6 h-6 text-muted-foreground" />
+          <div>
+            <p className="font-medium">Introdução à Álgebra</p>
+            <p className="text-sm text-muted-foreground">
+              Você parou na aula 5.
+            </p>
+          </div>
+          <Button variant="outline" size="sm" className="ml-auto">
+            Continuar
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const ProgressSummaryCard = () => (
+    <Card>
+      <CardContent className="p-6">
+        <h3 className="font-semibold mb-4">Resumo do Progresso</h3>
+        <div className="space-y-4">
+          <div className="flex items-center">
+            <p className="flex-1">Matemática</p>
+            <div className="w-32 h-2 bg-muted rounded-full">
+              <div
+                className="h-2 bg-green-500 rounded-full"
+                style={{ width: '75%' }}
+              />
+            </div>
+            <span className="ml-3 text-sm font-medium">75%</span>
+          </div>
+          <div className="flex items-center">
+            <p className="flex-1">Português</p>
+            <div className="w-32 h-2 bg-muted rounded-full">
+              <div
+                className="h-2 bg-yellow-500 rounded-full"
+                style={{ width: '40%' }}
+              />
+            </div>
+            <span className="ml-3 text-sm font-medium">40%</span>
           </div>
         </div>
-      </PageContainer>
-    );
-  }
-
-  return (
-    <PageContainer>
-      <Navigation />
-
-      <div className="sm:pl-56 pt-6 px-4 sm:px-6 lg:px-8 pb-24 sm:pb-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Header Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="mb-8"
-          >
-            <div className="flex items-center gap-4 mb-2">
-              <Avatar name={userName} size="lg" />
-              <div>
-                <h1 className="text-2xl font-bold text-[hsl(var(--foreground))]">
-                  Ola, {userName}
-                </h1>
-                <p className="text-[hsl(var(--muted-foreground))]">
-                  {school?.nome || 'Bem-vindo ao NEXA'}
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Goal Banner */}
-          {goal && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              className="mb-6"
-            >
-              <Card variant="elevated" padding="lg" className="bg-[hsl(var(--primary))] border-0">
-                <div className="flex items-center gap-5">
-                  <div className="h-14 w-14 shrink-0 flex items-center justify-center rounded-xl bg-white/20 text-white">
-                    <GoalIcon className="w-7 h-7" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white/70 text-sm font-medium mb-0.5">
-                      Seu Objetivo
-                    </p>
-                    <h2 className="text-xl font-bold text-white">
-                      {goalLabels[goal.objetivo]}
-                    </h2>
-                    {goal.forma_ingresso && (
-                      <p className="text-white/80 text-sm mt-1">
-                        via {goal.forma_ingresso.toUpperCase()}
-                      </p>
-                    )}
-                  </div>
-                  <div className="hidden sm:block">
-                    <Badge
-                      variant={goal.diagnostico_status === 'completed' ? 'success' : 'default'}
-                      size="md"
-                      className="bg-white/20 text-white border-0"
-                    >
-                      {goal.diagnostico_status === 'completed'
-                        ? 'Diagnostico concluido'
-                        : goal.diagnostico_status === 'skipped'
-                        ? 'Pulado'
-                        : 'Pendente'}
-                    </Badge>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* Quick Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.15 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8"
-          >
-            {[
-              { icon: Zap, label: 'Sequencia', value: '5 dias', color: 'text-[hsl(var(--warning))]' },
-              { icon: TrendingUp, label: 'Progresso', value: '32%', color: 'text-[hsl(var(--success))]' },
-              { icon: CheckSquare, label: 'Concluidas', value: '12', color: 'text-[hsl(var(--primary))]' },
-              { icon: Clock, label: 'Tempo', value: '4h 30m', color: 'text-[hsl(var(--accent))]' },
-            ].map((stat, i) => (
-              <Card key={stat.label} padding="sm">
-                <div className="flex items-center gap-3">
-                  <div className={['w-9 h-9 rounded-lg flex items-center justify-center bg-[hsl(var(--muted))]', stat.color].join(' ')}>
-                    <stat.icon className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))]">{stat.label}</p>
-                    <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{stat.value}</p>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </motion.div>
-
-          {/* Navigation Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-          >
-            <h3 className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-4">
-              Navegacao Rapida
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-              {menuItems.map((item, i) => (
-                <motion.div
-                  key={item.href}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.25 + i * 0.05 }}
-                >
-                  <CardMenu {...item} />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* CTA: Start Diagnostic */}
-          {(!goal || goal.diagnostico_status === 'not_started') && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-            >
-              <Card variant="elevated" padding="lg" className="text-center bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(217_91%_45%)] border-0">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-white/20 flex items-center justify-center">
-                  <Target className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Comece Seu Diagnostico
-                </h3>
-                <p className="text-white/80 mb-6 max-w-md mx-auto text-sm">
-                  Responda nosso questionario para entender seu nivel em cada disciplina e gerar seu plano de estudos personalizado.
-                </p>
-                <Button
-                  onClick={() => router.push('/aluno/diagnostico')}
-                  size="lg"
-                  variant="secondary"
-                  className="bg-white text-[hsl(var(--primary))] hover:bg-white/90"
-                  iconRight={<ArrowRight className="w-4 h-4" />}
-                >
-                  Iniciar Diagnostico
-                </Button>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* CTA: Skipped Diagnostic */}
-          {goal?.diagnostico_status === 'skipped' && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-            >
-              <Card variant="elevated" padding="lg" className="bg-[hsl(var(--warning-soft))] border-[hsl(var(--warning))]">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[hsl(var(--warning))] flex items-center justify-center shrink-0">
-                    <Clock className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-1">
-                      Voce pulou o diagnostico
-                    </h3>
-                    <p className="text-[hsl(var(--muted-foreground))] text-sm mb-4">
-                      Faca agora para obter melhores recomendacoes personalizadas
-                    </p>
-                    <Button
-                      onClick={() => router.push('/aluno/diagnostico')}
-                      size="md"
-                      variant="primary"
-                      className="bg-[hsl(var(--warning))] hover:bg-[hsl(38_92%_45%)]"
-                      iconRight={<ArrowRight className="w-4 h-4" />}
-                    >
-                      Fazer Agora
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          )}
-        </div>
-      </div>
-    </PageContainer>
+        <Button variant="link" className="p-0 mt-4" asChild>
+          <Link href="/aluno/disciplinas">
+            Ver todos <ArrowRight className="w-4 h-4 ml-1" />
+          </Link>
+        </Button>
+      </CardContent>
+    </Card>
   );
-}
 
-export default function AlunoDashboard() {
   return (
-    <ProtectedRoute>
-      <AlunoDashboardContent />
-    </ProtectedRoute>
+    <div className="flex flex-col gap-6">
+      <WelcomeMessage />
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <GoalCard />
+        <RecentActivityCard />
+      </div>
+
+      <ProgressSummaryCard />
+    </div>
   );
 }

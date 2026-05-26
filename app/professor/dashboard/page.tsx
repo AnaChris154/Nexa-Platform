@@ -3,7 +3,7 @@
 import { Navigation } from '@/components/Navigation';
 import { Header } from '@/components/Header';
 import { Container } from '@/components/Container';
-import { Button } from '@/components/Button';
+import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
 import { ProtectedRoute } from '@/app/contexts/ProtectedRoute';
 import { useAuth } from '@/app/contexts/AuthContext';
