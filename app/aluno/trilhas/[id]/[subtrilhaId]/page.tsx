@@ -28,7 +28,7 @@ import { gerarFeedbackErro } from '@/services/feedbackIAService';
 
 function ExerciciosContent() {
   const { id: trilhaId, subtrilhaId } = useParams<{ id: string; subtrilhaId: string }>();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   const [conteudos, setConteudos] = useState<ConteudoSubtrilha[]>([]);
   const [questoes, setQuestoes] = useState<QuestaoENEM[]>([]);
@@ -81,6 +81,7 @@ function ExerciciosContent() {
           resposta_marcada: respostaSelecionada,
           tipos_de_erro_comuns: questaoAtual.tipos_de_erro_comuns ?? [],
           conceitos_avaliados: questaoAtual.conceitos_avaliados ?? [],
+          nome: profile?.display_name,
         });
         setFeedbackIA(feedback);
       } catch (err) {

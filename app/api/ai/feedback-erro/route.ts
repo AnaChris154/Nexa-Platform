@@ -16,6 +16,8 @@ export interface FeedbackErroRequest {
   resposta_marcada: string;
   tipos_de_erro_comuns?: string[];
   conceitos_avaliados?: string[];
+  /** Nome do aluno, para o NEX chamar pelo nome (opcional). */
+  nome?: string;
 }
 
 export interface FeedbackErroResponse {

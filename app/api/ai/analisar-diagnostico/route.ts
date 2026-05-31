@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { HabilidadeResultado } from '@/services/diagnosticoService';
 import { chatCompletion } from '@/lib/ai/client';
 import { SYSTEM_ANALISE_DIAGNOSTICO } from '@/lib/ai/persona';
-import { construirPromptDiagnostico } from '@/lib/ai/prompts/diagnostico';
+import { construirPromptDiagnostico, type ContextoAluno } from '@/lib/ai/prompts/diagnostico';
 
 export interface TrilhaDisponivel {
   id: string;
@@ -13,6 +13,8 @@ export interface TrilhaDisponivel {
 export interface AnaliseDiagnosticoRequest {
   porHabilidade: HabilidadeResultado[];
   trilhasDisponiveis: TrilhaDisponivel[];
+  /** Contexto pessoal do aluno (nome, objetivo) para personalizar o tom. */
+  contexto?: ContextoAluno;
 }
 
 export interface TrilhaRecomendada {
@@ -31,9 +33,9 @@ export interface AnaliseDiagnosticoResponse {
 export async function POST(request: Request) {
   try {
     const body: AnaliseDiagnosticoRequest = await request.json();
-    const { porHabilidade, trilhasDisponiveis } = body;
+    const { porHabilidade, trilhasDisponiveis, contexto } = body;
 
-    const prompt = construirPromptDiagnostico(porHabilidade, trilhasDisponiveis);
+    const prompt = construirPromptDiagnostico(porHabilidade, trilhasDisponiveis, contexto);
 
     const raw =
       (await chatCompletion({

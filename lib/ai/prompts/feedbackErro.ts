@@ -3,8 +3,9 @@ import type { FeedbackErroRequest } from '@/app/api/ai/feedback-erro/route';
 /**
  * Monta o prompt (mensagem do usuário) do feedback de erro, na voz do NEX.
  *
- * O texto é mantido idêntico ao que estava inline na rota (Fase 1). Personalizar
- * o tom com nome/série/histórico do aluno fica para a Fase 2.
+ * A persona base vem do system prompt (lib/ai/persona.ts); aqui ficam os
+ * detalhes de tom, exemplos e o contexto da questão. Quando há nome do aluno,
+ * o NEX é instruído a chamá-lo pelo nome.
  */
 export function construirPromptFeedbackErro(body: FeedbackErroRequest): string {
   const {
@@ -33,6 +34,9 @@ export function construirPromptFeedbackErro(body: FeedbackErroRequest): string {
     conceitos_avaliados.length > 0
       ? `\nConceitos avaliados: ${conceitos_avaliados.join(', ')}.`
       : '';
+
+  const nome = body.nome?.trim();
+  const linhaNome = nome ? `\nO aluno se chama ${nome} — pode chamar pelo nome.` : '';
 
   return `Você é o NEX, o tutor mais descolado do Brasil, que ajuda alunos do ensino médio a arrasar nos estudos.
 
@@ -67,7 +71,7 @@ ${textoAlternativas}
 ${errosPedagogicos}${conceitosRelacionados}
 
 O aluno marcou: ${alternativaMarcada}
-A resposta correta é: ${alternativaCorreta}
+A resposta correta é: ${alternativaCorreta}${linhaNome}
 
 Gere agora o feedback para o aluno:`;
 }

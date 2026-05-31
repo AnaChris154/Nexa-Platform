@@ -1,6 +1,9 @@
 import { supabase } from '@/lib/supabaseClient';
 import { DiagnosticoNivel, HabilidadeResultado } from './diagnosticoService';
+import { getProfile } from './profileService';
+import { getStudentGoal } from './studentGoalsService';
 import type { AnaliseDiagnosticoResponse, TrilhaDisponivel } from '@/app/api/ai/analisar-diagnostico/route';
+import type { ContextoAluno } from '@/lib/ai/prompts/diagnostico';
 
 export interface StudyPlan {
   id: string;
@@ -247,11 +250,21 @@ export async function gerarPlanoEstudoComIA(
     }
     const trilhasDisponiveis: TrilhaDisponivel[] = Array.from(trilhasMap.values());
 
+    // 1b. Montar contexto do aluno (nome + objetivo) para personalizar o tom da IA.
+    // Falhas aqui não bloqueiam o plano — apenas deixam a mensagem menos personalizada.
+    const [{ profile }, { goal }] = await Promise.all([getProfile(), getStudentGoal(userId)]);
+    const contexto: ContextoAluno = {
+      nome: profile?.display_name ?? null,
+      objetivo: goal
+        ? { meta: goal.objetivo, curso: goal.curso_desejado, universidade: goal.universidade }
+        : null,
+    };
+
     // 2. Chamar endpoint de análise da IA
     const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/ai/analisar-diagnostico`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ porHabilidade, trilhasDisponiveis }),
+      body: JSON.stringify({ porHabilidade, trilhasDisponiveis, contexto }),
     });
 
     if (!response.ok) {
