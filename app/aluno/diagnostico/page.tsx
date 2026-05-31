@@ -9,34 +9,18 @@ import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/PageContainer';
 import { ProtectedRoute } from '@/app/contexts/ProtectedRoute';
 import { useAuth } from '@/app/contexts/AuthContext';
-import { getQuestoes, saveAnswer, calcularNivelPorMateria } from '@/services/diagnosticoService';
-import { gerarPlanoEstudo } from '@/services/studyPlanService';
+import { getQuestoes, saveAnswer, calcularNivelPorMateria, limparRespostasPrevias } from '@/services/diagnosticoService';
+import { gerarPlanoEstudoComIA } from '@/services/studyPlanService';
 import { getStudentGoal, atualizarStatusDiagnostico } from '@/services/studentGoalsService';
-import type { DiagnosticoNivel } from '@/services/diagnosticoService';
-
-interface Question {
-  id: string;
-  materia: string;
-  nivel: string;
-  pergunta: string;
-  alternativa_a: string;
-  alternativa_b: string;
-  alternativa_c: string;
-  alternativa_d: string;
-  resposta_correta: string;
-}
-
-interface UserAnswer {
-  [questionId: string]: string;
-}
+import type { DiagnosticoQuestion } from '@/services/diagnosticoService';
 
 function DiagnosticoContent() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
 
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<DiagnosticoQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<UserAnswer>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [isSkipping, setIsSkipping] = useState(false);
@@ -116,14 +100,10 @@ function DiagnosticoContent() {
   const currentQuestion = questions[currentQuestionIndex];
   const progress = Math.round(((currentQuestionIndex + 1) / questions.length) * 100);
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
-  const isAnswered = answers[currentQuestion.id] !== undefined;
-
-  const handleSelectAnswer = (option: string) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [currentQuestion.id]: option,
-    }));
-  };
+  // Questão aberta: precisa ter pelo menos 10 caracteres para habilitar "Próxima"
+  const isAnswered = currentQuestion.tipo === 'aberta'
+    ? (answers[currentQuestion.id] ?? '').trim().length >= 10
+    : answers[currentQuestion.id] !== undefined;
 
   const handleNext = () => {
     if (!isAnswered) {
@@ -157,15 +137,27 @@ function DiagnosticoContent() {
     setError(null);
 
     try {
+      // Limpar respostas anteriores antes de salvar as novas
+      // Garante que re-fazer o quiz não acumule respostas antigas
+      const { error: clearError } = await limparRespostasPrevias(user.id);
+      if (clearError) {
+        console.warn('Aviso: não foi possível limpar respostas antigas:', clearError.message);
+        // Não bloqueia o fluxo — continua mesmo assim
+      }
+
       // Salvar todas as respostas
       for (const question of questions) {
         const userAnswer = answers[question.id];
-        const isCorrect = userAnswer === question.resposta_correta;
+        // Questões abertas: correta = null (IA avalia)
+        // Questões fechadas: compara com resposta_correta
+        const isCorrect = question.tipo === 'aberta'
+          ? null
+          : userAnswer === question.resposta_correta;
 
         const { error: saveError } = await saveAnswer(
           user.id,
           question.id,
-          userAnswer as 'a' | 'b' | 'c' | 'd',
+          userAnswer,
           isCorrect
         );
 
@@ -176,8 +168,8 @@ function DiagnosticoContent() {
         }
       }
 
-      // Calcular nível por matéria
-      const { diagnostico, error: niveisError } = await calcularNivelPorMateria(user.id);
+      // Calcular resultado + mapa de habilidades
+      const { diagnostico, porHabilidade, error: niveisError } = await calcularNivelPorMateria(user.id);
 
       if (niveisError) {
         setError('Erro ao processar diagnóstico');
@@ -185,14 +177,13 @@ function DiagnosticoContent() {
         return;
       }
 
-      // Gerar plano de estudos
-      if (diagnostico) {
-        const { error: planError } = await gerarPlanoEstudo(user.id, diagnostico);
+      // Gerar plano com IA
+      if (diagnostico && porHabilidade) {
+        const { error: planError } = await gerarPlanoEstudoComIA(user.id, diagnostico, porHabilidade);
 
         if (planError) {
-          setError('Erro ao gerar plano de estudos');
-          setSubmitting(false);
-          return;
+          // Não bloqueia o fluxo se a IA falhar
+          console.error('Plano IA falhou, continuando:', planError.message);
         }
 
         const { error: statusError } = await atualizarStatusDiagnostico(
@@ -268,16 +259,29 @@ function DiagnosticoContent() {
           {currentQuestion.pergunta}
         </h3>
 
-        {/* Alternativas */}
+        {/* Alternativas ou campo aberto */}
+        {currentQuestion.tipo === 'aberta' ? (
+          <div className="mt-2">
+            <p className="text-xs text-[hsl(var(--muted-foreground))] mb-2">Escreva sua resposta abaixo — não existe certo ou errado aqui! 😊</p>
+            <textarea
+              value={answers[currentQuestion.id] ?? ''}
+              onChange={(e) => setAnswers((prev) => ({ ...prev, [currentQuestion.id]: e.target.value }))}
+              placeholder="Escreva aqui à vontade..."
+              rows={5}
+              className="w-full rounded-2xl border-2 border-[hsl(var(--border))] bg-[hsl(var(--muted)_/0.3)] p-4 text-sm text-[hsl(var(--foreground))] resize-none focus:outline-none focus:border-[hsl(var(--primary))] transition-colors"
+            />
+          </div>
+        ) : (
         <div className="space-y-3">
           {(['a', 'b', 'c', 'd'] as const).map((option) => {
-            const optionText = currentQuestion[`alternativa_${option}`];
+            const optionText = currentQuestion[`alternativa_${option}` as keyof typeof currentQuestion] as string;
+            if (!optionText || optionText.trim() === '') return null;
             const isSelected = answers[currentQuestion.id] === option;
 
             return (
               <button
                 key={option}
-                onClick={() => handleSelectAnswer(option)}
+                onClick={() => setAnswers((prev) => ({ ...prev, [currentQuestion.id]: option }))}
                 className={[
                   'w-full text-left p-4 rounded-2xl border-2 transition-all duration-200',
                   'flex items-center gap-4',
@@ -287,15 +291,12 @@ function DiagnosticoContent() {
                     : 'border-[hsl(var(--border))] hover:border-[hsl(var(--primary)_/0.4)] bg-[hsl(var(--muted)_/0.3)]',
                 ].join(' ')}
               >
-                {/* Radio dot */}
                 <div className={[
                   'w-6 h-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-all duration-200',
                   isSelected ? 'border-[hsl(var(--primary))] bg-gradient-primary' : 'border-[hsl(var(--border))]',
                 ].join(' ')}>
                   {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
                 </div>
-
-                {/* Texto */}
                 <div className="flex items-center gap-2 min-w-0">
                   <span className={['text-sm font-bold', isSelected ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'].join(' ')}>
                     {option.toUpperCase()}
@@ -308,6 +309,7 @@ function DiagnosticoContent() {
             );
           })}
         </div>
+        )}
 
         {/* Erro */}
         {error && (
